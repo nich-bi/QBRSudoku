@@ -52,19 +52,30 @@ fun SudokuScreen() {
     var selectedCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }
     var cells by remember { mutableStateOf<List<MutableList<Int>>>(emptyList()) }
     var fixedCells by remember { mutableStateOf<List<List<Boolean>>>(emptyList()) }
+    var solution by remember { mutableStateOf<List<List<Int>>>(emptyList()) }
+    var errorCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
-        val (initialBoard, _) = withContext(Dispatchers.IO) {
+        val (initialBoard, solutionBoard) = withContext(Dispatchers.IO) {
             SudokuApi.generateOnlineBoard()
         }
         board = initialBoard
         cells = initialBoard.cells.map { it.toMutableList() }
         fixedCells = initialBoard.cells.map { row -> row.map { it != 0 } }
+        solution = solutionBoard.cells
         loading = false
     }
 
     fun updateCell(row: Int, col: Int, value: Int) {
         if (value in 0..9 && !fixedCells[row][col]) {
+            if (solution.isNotEmpty() && value != 0 && value != solution[row][col]) {
+                errorCell = row to col
+                errorMessage = "Numero errato!"
+            } else {
+                errorCell = null
+                errorMessage = null
+            }
             cells = cells.mapIndexed { r, rowList ->
                 if (r == row) rowList.mapIndexed { c, oldValue ->
                     if (c == col) value else oldValue
@@ -94,7 +105,12 @@ fun SudokuScreen() {
                     grid = cells,
                     fixedCells = fixedCells,
                     selectedCell = selectedCell,
-                    onCellSelected = { row, col -> if (!fixedCells[row][col]) selectedCell = row to col }
+                    errorCell = errorCell,
+                    onCellSelected = { row, col -> if (!fixedCells[row][col]) selectedCell = row to col },
+                    onSuggestMove = {
+                        // logica per suggerire una mossa
+                    }
+
                 )
             }
             Box(
@@ -106,6 +122,26 @@ fun SudokuScreen() {
                     selectedCell?.let { (row, col) ->
                         updateCell(row, col, if (number == 0) 0 else number)
                     }
+                }
+
+            }
+            Box(
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+
+            ){
+                Button(
+                    onClick = {
+                        selectedCell?.let { (row, col) ->
+                            // Implementa la logica per suggerire una mossa.
+                            // Ad esempio, potresti impostare il valore corretto dalla soluzione.
+                            updateCell(row, col, solution[row][col])
+                        }
+                    },
+                    modifier = Modifier.align(Alignment.Center).padding(bottom = 16.dp)
+                ) {
+                    Text("Suggerisci Mossa")
                 }
             }
         }
