@@ -41,7 +41,7 @@ android {
 
 dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-
+    implementation(libs.androidx.ui.unit)
     implementation(libs.gson)
     implementation(libs.ui)
     implementation(libs.androidx.activity.compose.v172)
