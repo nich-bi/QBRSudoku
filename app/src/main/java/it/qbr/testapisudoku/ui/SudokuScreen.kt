@@ -1,28 +1,37 @@
 package it.qbr.testapisudoku.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import it.qbr.testapisudoku.model.Board
-import androidx.compose.runtime.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import it.qbr.testapisudoku.model.Board
 import it.qbr.testapisudoku.network.SudokuApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import androidx.compose.material3.Icon
+
 /*
 @Composable
 fun SudokuScreen() {
@@ -61,8 +70,8 @@ fun SudokuScreen(navController: NavHostController) {
     var solution by remember { mutableStateOf<List<List<Int>>>(emptyList()) }
     var errorCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
-    var seconds by remember { mutableStateOf(0) }
-    var errorCount by remember { mutableStateOf(0) }
+    var seconds by remember { mutableIntStateOf(0) }
+    var errorCount by remember { mutableIntStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         val (initialBoard, solutionBoard) = withContext(Dispatchers.IO) {
@@ -118,11 +127,8 @@ fun SudokuScreen(navController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             )
             {
-
-
                 SudokuTopBar(seconds = seconds, errorCount = errorCount,onHomeClick = { showDialog = true } )
                 Spacer(Modifier.height(14.dp))
-
                 SudokuBoard(
                     grid = cells,
                     fixedCells = fixedCells,

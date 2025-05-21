@@ -24,19 +24,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.qbr.testapisudoku.R
-import it.qbr.testapisudoku.ui.theme.gray_light
 import it.qbr.testapisudoku.ui.theme.light_primary
 import it.qbr.testapisudoku.ui.theme.white
 
@@ -132,11 +131,10 @@ fun SudokuBoard(
 ) {
     Box(
         modifier = Modifier
-            .padding(top = 80.dp, start = 12.dp, end = 12.dp, bottom = 12.dp)
-            .shadow(10.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .border(1.dp, Color.Black, RoundedCornerShape(16.dp))
-            .background(Color.White),
+           .padding(top = 50.dp, start = 12.dp, end = 12.dp, bottom = 12.dp)
+
+
+//            .background(Color.Black),
     ) {
         Column(
             Modifier
@@ -144,16 +142,16 @@ fun SudokuBoard(
         ) {
             for ((rowIdx, row) in grid.withIndex()) {
                 Row {
-                    for ((colIdx, cell) in row.withIndex()) {
-                        val thickTop = if (rowIdx % 3 == 0) 2.dp else 0.5.dp
-                        val thickLeft = if (colIdx % 3 == 0) 2.dp else 0.5.dp
-                        val thickRight = if (colIdx == 8) 2.dp else 0.5.dp
-                        val thickBottom = if (rowIdx == 8) 2.dp else 0.5.dp
+                   for ((colIdx, cell) in row.withIndex()) {
+                     val thickTop = if (rowIdx == 0) 3.dp else if (rowIdx % 3 == 0) 3.dp else 0.5.dp
+                        val thickLeft = if (colIdx == 0) 3.dp else if (colIdx % 3 == 0) 3.dp else 0.5.dp
+                        val thickRight = if (colIdx == 8) 3.dp else if ((colIdx + 1) % 3 == 0) 3.dp else 0.5.dp
+                        val thickBottom = if (rowIdx == 8) 3.dp else if ((rowIdx + 1) % 3 == 0) 3.dp else 0.5.dp
 
                         val isHighlighted = selectedCell?.let { (selRow, selCol) ->
                             rowIdx == selRow ||
-                                    colIdx == selCol ||
-                                    (rowIdx / 3 == selRow / 3 && colIdx / 3 == selCol / 3)
+                            colIdx == selCol ||
+                            (rowIdx / 3 == selRow / 3 && colIdx / 3 == selCol / 3)
                         } == true
 
                         SudokuCell(
@@ -166,7 +164,8 @@ fun SudokuBoard(
                             borderTop = thickTop,
                             borderLeft = thickLeft,
                             borderRight = thickRight,
-                            borderBottom = thickBottom
+                            borderBottom = thickBottom,
+                            borderColor = Color.Black
                         )
                     }
                 }
@@ -183,28 +182,56 @@ fun SudokuCell(
     isFixed: Boolean,
     isError: Boolean,
     onClick: () -> Unit,
-    borderTop: Dp = 1.dp,
-    borderLeft: Dp = 1.dp,
-    borderRight: Dp = 1.dp,
-    borderBottom: Dp = 1.dp,
-    isHighlighted: Boolean
+    borderTop: Dp = 0.dp,
+    borderLeft: Dp = 0.dp,
+    borderRight: Dp = 0.dp,
+    borderBottom: Dp = 0.dp,
+    isHighlighted: Boolean,
+    borderColor: Color,
 ) {
     val backgroundColor = when {
         isError -> Color.Red.copy(alpha = 0.2f)
         isSelected -> Color.Gray.copy(alpha = 0.5f)
-        isHighlighted -> gray_light
-        else -> Color(0xFFF8FAFF)
+        isHighlighted -> Color.Gray
+        else -> Color.White
     }
-    val borderColor = Color.Gray
-    val textColor = Color.Black
 
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(40.dp)
-            //.padding(0.5.dp)
-            .background(backgroundColor, RoundedCornerShape(6.dp))
-            .border(2.dp, borderColor, RectangleShape)
+            .background(backgroundColor)
+
+            .drawBehind {
+                // Bordo superiore
+                drawLine(
+                    color = borderColor,
+                    start = Offset(0f, 0f),
+                    end = Offset(size.width, 0f),
+                    strokeWidth = borderTop.toPx()
+                )
+                // Bordo sinistro
+                drawLine(
+                    color = borderColor,
+                    start = Offset(0f, 0f),
+                    end = Offset(0f, size.height),
+                    strokeWidth = borderLeft.toPx()
+                )
+                // Bordo destro
+                drawLine(
+                    color = borderColor,
+                    start = Offset(size.width, 0f),
+                    end = Offset(size.width, size.height),
+                    strokeWidth = borderRight.toPx()
+                )
+                // Bordo inferiore
+                drawLine(
+                    color = borderColor,
+                    start = Offset(0f, size.height),
+                    end = Offset(size.width, size.height),
+                    strokeWidth = borderBottom.toPx()
+                )
+            }
             .clickable(enabled = !isFixed, onClick = onClick)
     ) {
         if (value != 0) {
@@ -212,22 +239,18 @@ fun SudokuCell(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .size(32.dp)
-                    .align(Alignment.Center) // centra il cerchio nel Box genitore
                     .background(light_primary, shape = CircleShape)
-            ){
+            ) {
                 Text(
                     text = value.toString(),
                     style = MaterialTheme.typography.labelSmall,
                     fontSize = 15.sp,
-                    // fontWeight = FontWeight.Bold,
                     color = white
                 )
             }
         }
     }
 }
-
-
 @Composable
 fun SudokuKeypad(onNumberSelected: (Int) -> Unit) {
     Column(
