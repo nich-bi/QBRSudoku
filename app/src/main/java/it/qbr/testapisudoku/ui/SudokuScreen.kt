@@ -14,17 +14,15 @@ import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import it.qbr.testapisudoku.network.SudokuApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import kotlin.inc
-import kotlin.text.get
-import kotlin.time.Duration.Companion.seconds
-
+import androidx.compose.material3.Icon
 /*
 @Composable
 fun SudokuScreen() {
@@ -51,14 +49,10 @@ fun SudokuScreen() {
 }
 */
 
-@Preview(showBackground = true)
-@Composable
-fun SudokuScreenPreview() {
-    SudokuScreen()
-}
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SudokuScreen() {
+fun SudokuScreen(navController: NavHostController) {
     var board by remember { mutableStateOf<Board?>(null) }
     var loading by remember { mutableStateOf(true) }
     var selectedCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }
@@ -69,6 +63,7 @@ fun SudokuScreen() {
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var seconds by remember { mutableStateOf(0) }
     var errorCount by remember { mutableStateOf(0) }
+    var showDialog by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         val (initialBoard, solutionBoard) = withContext(Dispatchers.IO) {
             SudokuApi.generateOnlineBoard()
@@ -91,7 +86,7 @@ fun SudokuScreen() {
         if (value in 0..9 && !fixedCells[row][col]) {
             if (solution.isNotEmpty() && value != 0 && value != solution[row][col]) {
                 errorCell = row to col
-                errorMessage = "Numero errato!"
+                //errorMessage = "Numero errato!"
                 errorCount++
             } else {
                 errorCell = null
@@ -121,8 +116,11 @@ fun SudokuScreen() {
                     .align(Alignment.TopCenter)
                     .padding(top = 32.dp, bottom = 120.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                SudokuTopBar(seconds = seconds, errorCount = errorCount)
+            )
+            {
+
+
+                SudokuTopBar(seconds = seconds, errorCount = errorCount,onHomeClick = { showDialog = true } )
                 Spacer(Modifier.height(14.dp))
 
                 SudokuBoard(
@@ -133,17 +131,6 @@ fun SudokuScreen() {
                     onCellSelected = { row, col -> if (!fixedCells[row][col]) selectedCell = row to col },
                     onSuggestMove = { }
                 )
-            }
-            Box(
-                Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-            ) {
-                SudokuKeypad { number ->
-                    selectedCell?.let { (row, col) ->
-                        updateCell(row, col, if (number == 0) 0 else number)
-                    }
-                }
             }
             Box(
                 Modifier
@@ -161,6 +148,39 @@ fun SudokuScreen() {
                     Text("Suggerisci Mossa")
                 }
             }
+            Box(
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+            ) {
+                SudokuKeypad { number ->
+                    selectedCell?.let { (row, col) ->
+                        updateCell(row, col, if (number == 0) 0 else number)
+                    }
+                }
+            }
+
+
+            if (showDialog) {
+                AlertDialog(
+                    onDismissRequest = { showDialog = false },
+                    title = { Text("Sei sicuro?") },
+                    text = { Text("Tornando alla home perderai la partita in corso.") },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            showDialog = false
+                            navController.popBackStack() // Torna alla home
+                        }) {
+                            Text("Sì, torna alla Home")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showDialog = false }) {
+                            Text("Annulla")
+                        }
+                    }
+                )
+            }
+        }
         }
     }
-}

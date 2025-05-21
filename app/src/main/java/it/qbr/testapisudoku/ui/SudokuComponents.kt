@@ -13,11 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,19 +26,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import it.qbr.testapisudoku.R
 import it.qbr.testapisudoku.ui.theme.gray_light
 import it.qbr.testapisudoku.ui.theme.light_primary
-import it.qbr.testapisudoku.ui.theme.light_secondary
 import it.qbr.testapisudoku.ui.theme.white
-
 
 /*
 @Composable
@@ -69,39 +69,53 @@ fun SudokuCell(value: Int) {
     }
 }*/
 
-@Preview(showBackground = true)
-@Composable
-fun SudokuPreview() {
-    SudokuTopBar(45, 2)
-}
+
 
 
 @Composable
-fun SudokuTopBar(seconds: Int, errorCount: Int) {
+fun SudokuTopBar(seconds: Int, errorCount: Int,onHomeClick: () -> Unit) {
     val minutes = seconds / 60
     val secs = seconds % 60
+
     Row(
         Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_timer_icon),
-            contentDescription = "Icona timer"
-        )
-        Text(
-            text = "%02d:%02d".format(minutes, secs),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
+    )
+    {
+        IconButton(onClick = onHomeClick) {
+            Icon(
+                painter = painterResource(id = R.drawable.back_svgrepo_com),
+                contentDescription = "Torna alla Home",
+                modifier = Modifier.size(30.dp)
+            )
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.stopwatch_svgrepo_com),
+                contentDescription = "Icona timer",
+                modifier = Modifier.size(30.dp)
+            )
+            Spacer(modifier = Modifier.width(4.dp)) // Spazio tra immagine e testo
+            Text(
+                text = "%02d:%02d".format(minutes, secs),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily(Font(R.font.segoeuithis)),
+                color = Color.Black
+            )
+        }
         Text(
             text = "Errori: $errorCount",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.Red
+            fontFamily = FontFamily(Font(R.font.segoeuithis)),
+            color = Color.Black,
+
         )
     }
 }
