@@ -19,7 +19,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.qbr.testapisudoku.network.SudokuApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import kotlin.inc
+import kotlin.text.get
+import kotlin.time.Duration.Companion.seconds
+
 /*
 @Composable
 fun SudokuScreen() {
@@ -62,7 +67,8 @@ fun SudokuScreen() {
     var solution by remember { mutableStateOf<List<List<Int>>>(emptyList()) }
     var errorCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
-
+    var seconds by remember { mutableStateOf(0) }
+    var errorCount by remember { mutableStateOf(0) }
     LaunchedEffect(Unit) {
         val (initialBoard, solutionBoard) = withContext(Dispatchers.IO) {
             SudokuApi.generateOnlineBoard()
@@ -73,12 +79,20 @@ fun SudokuScreen() {
         solution = solutionBoard.cells
         loading = false
     }
-
+    LaunchedEffect(loading) {
+        if (!loading) {
+            while (true) {
+                delay(1000)
+                seconds++
+            }
+        }
+    }
     fun updateCell(row: Int, col: Int, value: Int) {
         if (value in 0..9 && !fixedCells[row][col]) {
             if (solution.isNotEmpty() && value != 0 && value != solution[row][col]) {
                 errorCell = row to col
                 errorMessage = "Numero errato!"
+                errorCount++
             } else {
                 errorCell = null
                 errorMessage = null
@@ -108,16 +122,15 @@ fun SudokuScreen() {
                     .padding(top = 32.dp, bottom = 120.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                SudokuTopBar(seconds = seconds, errorCount = errorCount)
+                Spacer(Modifier.height(16.dp))
                 SudokuBoard(
                     grid = cells,
                     fixedCells = fixedCells,
                     selectedCell = selectedCell,
                     errorCell = errorCell,
                     onCellSelected = { row, col -> if (!fixedCells[row][col]) selectedCell = row to col },
-                    onSuggestMove = {
-                        // logica per suggerire una mossa
-                    }
-
+                    onSuggestMove = { }
                 )
             }
             Box(
@@ -130,19 +143,15 @@ fun SudokuScreen() {
                         updateCell(row, col, if (number == 0) 0 else number)
                     }
                 }
-
             }
             Box(
                 Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-
-            ){
+            ) {
                 Button(
                     onClick = {
                         selectedCell?.let { (row, col) ->
-                            // Implementa la logica per suggerire una mossa.
-                            // Ad esempio, potresti impostare il valore corretto dalla soluzione.
                             updateCell(row, col, solution[row][col])
                         }
                     },
