@@ -1,5 +1,6 @@
 package it.qbr.testapisudoku.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -12,7 +13,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,8 +30,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import it.qbr.testapisudoku.R
+import it.qbr.testapisudoku.ui.theme.gray_light
+import it.qbr.testapisudoku.ui.theme.light_primary
+import it.qbr.testapisudoku.ui.theme.light_secondary
+import it.qbr.testapisudoku.ui.theme.white
 
 
 /*
@@ -59,7 +71,7 @@ fun SudokuCell(value: Int) {
 
 @Preview(showBackground = true)
 @Composable
-fun SudkuPreview() {
+fun SudokuPreview() {
     SudokuTopBar(45, 2)
 }
 
@@ -75,8 +87,12 @@ fun SudokuTopBar(seconds: Int, errorCount: Int) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_timer_icon),
+            contentDescription = "Icona timer"
+        )
         Text(
-            text = "⏱ %02d:%02d".format(minutes, secs),
+            text = "%02d:%02d".format(minutes, secs),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             color = Color.Black
@@ -104,6 +120,8 @@ fun SudokuBoard(
         modifier = Modifier
             .padding(top = 80.dp, start = 12.dp, end = 12.dp, bottom = 12.dp)
             .shadow(10.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .border(1.dp, Color.Black, RoundedCornerShape(16.dp))
             .background(Color.White),
     ) {
         Column(
@@ -160,7 +178,7 @@ fun SudokuCell(
     val backgroundColor = when {
         isError -> Color.Red.copy(alpha = 0.2f)
         isSelected -> Color.Gray.copy(alpha = 0.5f)
-        isHighlighted -> Color.Gray.copy(alpha = 0.3f)
+        isHighlighted -> gray_light
         else -> Color(0xFFF8FAFF)
     }
     val borderColor = Color.Gray
@@ -176,15 +194,25 @@ fun SudokuCell(
             .clickable(enabled = !isFixed, onClick = onClick)
     ) {
         if (value != 0) {
-            Text(
-                text = value.toString(),
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = textColor
-            )
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(32.dp)
+                    .align(Alignment.Center) // centra il cerchio nel Box genitore
+                    .background(light_primary, shape = CircleShape)
+            ){
+                Text(
+                    text = value.toString(),
+                    style = MaterialTheme.typography.labelSmall,
+                    fontSize = 15.sp,
+                    // fontWeight = FontWeight.Bold,
+                    color = white
+                )
+            }
         }
     }
 }
+
 
 @Composable
 fun SudokuKeypad(onNumberSelected: (Int) -> Unit) {
@@ -203,24 +231,25 @@ fun SudokuKeypad(onNumberSelected: (Int) -> Unit) {
                 Box(
                     modifier = Modifier
                         .padding(10.dp)
-                        .size(50.dp)
-                        .clip(RectangleShape)
-                        .background(Color.LightGray)
-                        .border(2.dp, Color.Black, RectangleShape)
+                        .size(55.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .border(2.dp, light_primary, RoundedCornerShape(16.dp))
+                        .background(white)
                         .clickable { onNumberSelected(number) },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = number.toString(),
-                        fontSize = 26.sp,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontSize = 18.sp,
                         color = Color.Black,
-                        fontWeight = FontWeight.Bold
+                        // fontWeight = FontWeight.Bold
                     )
                 }
             }
         }
         Spacer(modifier = Modifier.height(10.dp))
-        // Seconda fila: 6-9 + C
+        // Seconda fila: 6-9
         Row(
             Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
@@ -229,39 +258,44 @@ fun SudokuKeypad(onNumberSelected: (Int) -> Unit) {
                 Box(
                     modifier = Modifier
                         .padding(10.dp)
-                        .size(50.dp)
-                        .clip(RectangleShape)
-                        .background(Color.LightGray)
+                        .size(55.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .border(2.dp, light_primary, RoundedCornerShape(16.dp))
+                        .background(white)
                         .border(2.dp, Color.Black, RectangleShape)
                         .clickable { onNumberSelected(number) },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = number.toString(),
-                        fontSize = 26.sp,
+                        fontSize = 18.sp,
                         color = Color.Black,
-                        fontWeight = FontWeight.Bold
+                        // fontWeight = FontWeight.Bold
                     )
                 }
             }
+
+            /*
             // Bottone "C"
             Box(
                 modifier = Modifier
                     .padding(10.dp)
-                    .size(50.dp)
-                    .clip(RectangleShape)
-                    .background(Color.White)
+                    .size(55.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .border(2.dp, Color.Black, RoundedCornerShape(16.dp))
+                    .background(white)
                     .border(2.dp, Color.White, RectangleShape)
                     .clickable { onNumberSelected(0) },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "C",
-                    fontSize = 26.sp,
+                    fontSize = 18.sp,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold
                 )
             }
+            */
         }
 
     }

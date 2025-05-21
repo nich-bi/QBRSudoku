@@ -40,6 +40,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.material.icons.extended)
     debugImplementation(libs.ui.tooling)
     implementation(libs.okhttp)
     implementation (libs.androidx.navigation.compose)

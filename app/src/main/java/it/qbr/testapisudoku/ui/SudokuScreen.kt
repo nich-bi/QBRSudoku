@@ -123,7 +123,8 @@ fun SudokuScreen() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 SudokuTopBar(seconds = seconds, errorCount = errorCount)
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(14.dp))
+
                 SudokuBoard(
                     grid = cells,
                     fixedCells = fixedCells,
