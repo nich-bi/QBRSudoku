@@ -31,6 +31,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 
 
 /*
@@ -62,6 +65,8 @@ fun SudokuCell(value: Int) {
     }
 }*/
 
+
+
 @Composable
 fun SudokuBoard(
     grid: List<List<Int>>,
@@ -75,8 +80,9 @@ fun SudokuBoard(
     Box(
         modifier = Modifier
             .padding(12.dp)
-            .shadow(10.dp, RoundedCornerShape(24.dp))
-            .background(Color.White, RoundedCornerShape(24.dp))
+            .shadow(10.dp)
+            .background(Color.White),
+
     ) {
         Column(
             Modifier
@@ -100,6 +106,7 @@ fun SudokuBoard(
                             borderLeft = thickLeft,
                             borderRight = thickRight,
                             borderBottom = thickBottom
+
                         )
                     }
                 }
@@ -107,6 +114,7 @@ fun SudokuBoard(
         }
     }
 }
+
 
 @Composable
 fun SudokuCell(
@@ -125,22 +133,23 @@ fun SudokuCell(
         isSelected -> Color(0xFFBBDEFB).copy(alpha = 0.5f)
         else -> Color(0xFFF8FAFF)
     }
-    val borderColor = Color(0xFF90CAF9)
-    val textColor = if (isFixed) Color(0xFF1976D2) else Color(0xFF0D47A1)
+    val borderColor = Color.Gray
+    val textColor = Color.Black
 
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .size(38.dp)
-            .padding(0.5.dp)
+            .size(40.dp)
+            //.padding(0.5.dp)
             .background(backgroundColor, RoundedCornerShape(6.dp))
-            .border(2.dp, borderColor, RoundedCornerShape(6.dp))
+            .border(2.dp, borderColor, RectangleShape)
             .clickable(enabled = !isFixed, onClick = onClick)
     ) {
         if (value != 0) {
             Text(
                 text = value.toString(),
                 fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
                 color = textColor
             )
         }
@@ -155,31 +164,26 @@ fun SudokuKeypad(onNumberSelected: (Int) -> Unit) {
             .padding(top = 16.dp, bottom = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        for (row in 0..2) {
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                for (col in 1..3) {
-                    val number = row * 3 + col
-                    if (number <= 9) {
-                        Box(
-                            modifier = Modifier
-                                .padding(5.dp)
-                                .size(46.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(Color.White)
-                                .border(2.dp, Color(0xFF90CAF9), RoundedCornerShape(12.dp))
-                                .clickable { onNumberSelected(number) },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = number.toString(),
-                                fontSize = 22.sp,
-                                color = Color(0xFF1976D2)
-                            )
-                        }
-                    }
+        // Tutti i numeri da 1 a 9 su una sola riga
+        Row(
+            Modifier.fillMaxWidth().padding(top = 4.dp, bottom = 16.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            for (number in 1..9) {
+                Box(
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .size(46.dp)
+                        .clip(RectangleShape)
+                        .background(Color.White)
+                        .clickable { onNumberSelected(number) },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = number.toString(),
+                        fontSize = 30.sp,
+                        color = Color.Black
+                    )
                 }
             }
         }

@@ -40,8 +40,9 @@ android {
 }
 
 dependencies {
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-
+    debugImplementation(libs.ui.tooling)
+    implementation(libs.okhttp)
+    implementation (libs.androidx.navigation.compose)
     implementation(libs.androidx.ui.unit)
     implementation(libs.gson)
     implementation(libs.ui)
