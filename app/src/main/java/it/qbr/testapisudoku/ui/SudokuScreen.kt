@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -25,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import it.qbr.testapisudoku.model.Board
 import it.qbr.testapisudoku.network.SudokuApi
@@ -62,6 +66,8 @@ fun SudokuScreen() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SudokuScreen(navController: NavHostController) {
+    var hintsLeft by remember { mutableIntStateOf(3) }
+    var showNoHintsDialog by remember { mutableStateOf(false) }
     var board by remember { mutableStateOf<Board?>(null) }
     var loading by remember { mutableStateOf(true) }
     var selectedCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }
@@ -142,16 +148,36 @@ fun SudokuScreen(navController: NavHostController) {
                 Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
+                    .padding(bottom = 16.dp)
             ) {
                 Button(
                     onClick = {
-                        selectedCell?.let { (row, col) ->
-                            updateCell(row, col, solution[row][col])
+                        if(hintsLeft > 0) {
+                            hintsLeft--
+                            selectedCell?.let { (row, col) ->
+                                updateCell(row, col, solution[row][col])
+                            }
+                        } else {
+                            showNoHintsDialog = true
                         }
                     },
-                    modifier = Modifier.align(Alignment.Center).padding(bottom = 16.dp)
+                    modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 16.dp)
                 ) {
                     Text("Suggerisci Mossa")
+                    if (hintsLeft > 0) {
+                        Box(
+                            modifier = Modifier
+                                .size(18.dp)
+                                .offset(x = 5.dp, y = (-12).dp)
+                                .background(Color.Red, shape = CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = hintsLeft.toString(),
+                                color = Color.White,
+                                fontSize = 12.sp
+                            )
+                        }
                 }
             }
             Box(
@@ -166,7 +192,18 @@ fun SudokuScreen(navController: NavHostController) {
                 }
             }
 
-
+                if (showNoHintsDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showNoHintsDialog = false },
+                        title = { Text("Suggerimenti terminati") },
+                        text = { Text("Hai esaurito i suggerimenti disponibili.") },
+                        confirmButton = {
+                            TextButton(onClick = { showNoHintsDialog = false }) {
+                                Text("OK")
+                            }
+                        }
+                    )
+                }
             if (showDialog) {
                 AlertDialog(
                     onDismissRequest = { showDialog = false },
@@ -190,3 +227,5 @@ fun SudokuScreen(navController: NavHostController) {
         }
         }
     }
+}
+
