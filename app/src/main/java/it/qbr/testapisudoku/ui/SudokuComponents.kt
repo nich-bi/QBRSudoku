@@ -36,7 +36,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.qbr.testapisudoku.R
+import it.qbr.testapisudoku.ui.theme.light_gray
 import it.qbr.testapisudoku.ui.theme.light_primary
+import it.qbr.testapisudoku.ui.theme.light_secondary
 import it.qbr.testapisudoku.ui.theme.white
 
 /*
@@ -125,7 +127,9 @@ fun SudokuBoard(
     grid: List<List<Int>>,
     fixedCells: List<List<Boolean>>,
     selectedCell: Pair<Int, Int>?,
-    errorCell: Pair<Int, Int>?,
+   // errorCell: Pair<Int, Int>?,
+    errorCells:Set<Pair<Int, Int>>,
+    selectedNumber: Int?,
     onSuggestMove: ()-> Unit,
     onCellSelected: (Int, Int) -> Unit
 ) {
@@ -158,8 +162,9 @@ fun SudokuBoard(
                             value = cell,
                             isSelected = selectedCell == Pair(rowIdx, colIdx),
                             isFixed = fixedCells[rowIdx][colIdx],
-                            isError = errorCell == Pair(rowIdx, colIdx),
+                            isError = errorCells.contains(Pair(rowIdx, colIdx)),
                             isHighlighted = isHighlighted && selectedCell != Pair(rowIdx, colIdx),
+                            isSameNumber = selectedNumber != null && cell == selectedNumber && cell != 0,
                             onClick = { onCellSelected(rowIdx, colIdx) },
                             borderTop = thickTop,
                             borderLeft = thickLeft,
@@ -187,13 +192,20 @@ fun SudokuCell(
     borderRight: Dp = 0.dp,
     borderBottom: Dp = 0.dp,
     isHighlighted: Boolean,
+    isSameNumber: Boolean,
     borderColor: Color,
 ) {
     val backgroundColor = when {
-        isError -> Color.Red.copy(alpha = 0.2f)
-        isSelected -> Color.Gray.copy(alpha = 0.5f)
-        isHighlighted -> Color.Gray
+      //  isError -> Color.Red.copy(alpha = 0.2f)
+        isSelected -> light_gray.copy(alpha = 0.5f)
+        isHighlighted -> light_gray
         else -> Color.White
+    }
+
+    val circularShapeColor = when {
+        isError -> Color.Red.copy(alpha = 0.2f)
+        isSameNumber-> light_primary
+        else -> light_secondary
     }
 
     Box(
@@ -239,18 +251,21 @@ fun SudokuCell(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .size(32.dp)
-                    .background(light_primary, shape = CircleShape)
+                    .background(circularShapeColor, shape = CircleShape)
             ) {
                 Text(
                     text = value.toString(),
                     style = MaterialTheme.typography.labelSmall,
                     fontSize = 15.sp,
-                    color = white
+                    color = Color.Black
                 )
             }
         }
     }
 }
+
+
+
 @Composable
 fun SudokuKeypad(onNumberSelected: (Int) -> Unit) {
     Column(
