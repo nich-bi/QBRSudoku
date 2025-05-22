@@ -267,7 +267,7 @@ fun SudokuScreen(navController: NavHostController) {
                     AlertDialog(
                         onDismissRequest = { showNoHintsDialog = false },
                         title = { Text("Suggerimenti terminati") },
-                        text = { Text("Hai esaurito i suggerimenti disponibili.") },
+                        text = { Text("Hai esaurito i suggerimenti negro.") },
                         confirmButton = {
                             TextButton(onClick = { showNoHintsDialog = false }) {
                                 Text("OK")
