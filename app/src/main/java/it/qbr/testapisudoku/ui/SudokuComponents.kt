@@ -41,36 +41,6 @@ import it.qbr.testapisudoku.ui.theme.light_primary
 import it.qbr.testapisudoku.ui.theme.light_secondary
 import it.qbr.testapisudoku.ui.theme.white
 
-/*
-@Composable
-fun SudokuBoard(grid: List<List<Int>>) {
-    Column(Modifier.padding(16.dp)) {
-        for (row in grid) {
-            Row {
-                for (cell in row) {
-                    SudokuCell(cell)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun SudokuCell(value: Int) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .size(40.dp)
-            .padding(1.dp)
-            .background(Color.LightGray, RoundedCornerShape(4.dp))
-    ) {
-        if (value != 0) {
-            Text(text = value.toString(), fontSize = 18.sp, color = Color.Black)
-        }
-    }
-}*/
-
-
 
 
 @Composable
@@ -137,8 +107,6 @@ fun SudokuBoard(
         modifier = Modifier
            .padding(top = 50.dp, start = 12.dp, end = 12.dp, bottom = 12.dp)
 
-
-//            .background(Color.Black),
     ) {
         Column(
             Modifier
@@ -284,8 +252,8 @@ fun SudokuKeypad(onNumberSelected: (Int) -> Unit) {
                     modifier = Modifier
                         .padding(10.dp)
                         .size(55.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .border(2.dp, light_primary, RoundedCornerShape(16.dp))
+                        .clip(RoundedCornerShape(10.dp))
+                        .border(2.dp, light_primary, RoundedCornerShape(10.dp))
                         .background(white)
                         .clickable { onNumberSelected(number) },
                     contentAlignment = Alignment.Center
@@ -293,9 +261,9 @@ fun SudokuKeypad(onNumberSelected: (Int) -> Unit) {
                     Text(
                         text = number.toString(),
                         style = MaterialTheme.typography.labelSmall,
-                        fontSize = 18.sp,
+                        fontSize = 20.sp,
                         color = Color.Black,
-                        // fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Light
                     )
                 }
             }
@@ -311,8 +279,8 @@ fun SudokuKeypad(onNumberSelected: (Int) -> Unit) {
                     modifier = Modifier
                         .padding(10.dp)
                         .size(55.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .border(2.dp, light_primary, RoundedCornerShape(16.dp))
+                        .clip(RoundedCornerShape(10.dp))
+                        .border(2.dp, light_primary, RoundedCornerShape(10.dp))
                         .background(white)
                         .border(2.dp, Color.Black, RectangleShape)
                         .clickable { onNumberSelected(number) },
@@ -320,34 +288,13 @@ fun SudokuKeypad(onNumberSelected: (Int) -> Unit) {
                 ) {
                     Text(
                         text = number.toString(),
-                        fontSize = 18.sp,
+                        fontSize = 20.sp,
                         color = Color.Black,
-                        // fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Light
                     )
                 }
             }
 
-            /*
-            // Bottone "C"
-            Box(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .size(55.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .border(2.dp, Color.Black, RoundedCornerShape(16.dp))
-                    .background(white)
-                    .border(2.dp, Color.White, RectangleShape)
-                    .clickable { onNumberSelected(0) },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "C",
-                    fontSize = 18.sp,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            */
         }
 
     }

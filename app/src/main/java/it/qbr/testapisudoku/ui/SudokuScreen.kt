@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -93,8 +95,7 @@ fun SudokuScreen(navController: NavHostController) {
     var errorCells by remember { mutableStateOf<Set<Pair<Int, Int>>>(emptySet()) }
     var selectedNumber by remember { mutableStateOf<Int?>(null) }
     var showWinDialog by remember { mutableStateOf(false) }
-    val isSuggestEnabled = selectedCell?.let { (row, col) -> cells[row][col] == 0 } == true
-
+    val isSuggestEnabled = selectedCell?.let { (row, col) -> !fixedCells[row][col] && cells[row][col] != solution[row][col] } == true
     if (step == 0) {
         // Step selezione difficoltà
 
@@ -221,37 +222,64 @@ fun SudokuScreen(navController: NavHostController) {
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
             ) {
-                Button(
-                    onClick = {
-                        if(hintsLeft > 0) {
-                            hintsLeft--
-                            selectedCell?.let { (row, col) ->
-                                updateCell(row, col, solution[row][col])
-                            }
-                        } else {
-                            showNoHintsDialog = true
-                        }
-                    },
-                    enabled = isSuggestEnabled,
-                    modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 250.dp)
-                ) {
-                    Text("Suggerisci Mossa")
-                    if (hintsLeft > 0) {
-                        Box(
-                            modifier = Modifier
-                                .size(18.dp)
-                                .offset(x = 5.dp, y = (-12).dp)
-                                .background(Color.Red, shape = CircleShape),
-                            contentAlignment = Alignment.Center
+                Row (Modifier.align(Alignment.BottomCenter)){
+                    Column {
+                        IconButton(
+                            onClick = {
+                                selectedCell?.let { (row, col) ->
+                                    updateCell(row, col, 0)
+                                }
+                            },
+                            modifier = Modifier.padding(bottom = 250.dp).size(80.dp)
                         ) {
-                            Text(
-                                text = hintsLeft.toString(),
-                                color = Color.White,
-                                fontSize = 12.sp
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_eraser_24), // Sostituisci con la tua icona
+                                contentDescription = "Cancella cella",
+                                modifier = Modifier.size(55.dp)
                             )
+
                         }
+
+                    }
+
+
+                    IconButton(
+                        onClick = {
+                            if(hintsLeft > 0) {
+                                hintsLeft--
+                                selectedCell?.let { (row, col) ->
+                                    updateCell(row, col, solution[row][col])
+                                }
+                            } else {
+                                showNoHintsDialog = true
+                            }
+                        },
+                        enabled = isSuggestEnabled,
+                        modifier = Modifier.padding(bottom = 250.dp).size(80.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_lightbulb_stars_24),
+                            contentDescription = "Suggerimento",
+                            modifier = Modifier.size(55.dp)
+                        )
+                        if (hintsLeft > 0) {
+                            Box(
+                                modifier = Modifier
+                                    .size(15.dp)
+                                    .offset(x = 8.dp, y = (12).dp)
+                                    .background(Color.Red, shape = CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = hintsLeft.toString(),
+                                    color = Color.White,
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
+                    }
                 }
-            }
+
             Box(
                 Modifier
                     .align(Alignment.BottomCenter)
