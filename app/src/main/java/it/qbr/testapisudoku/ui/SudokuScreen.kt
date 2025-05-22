@@ -48,8 +48,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.collections.get
+import kotlin.collections.getOrPut
 import kotlin.text.compareTo
 import kotlin.text.get
+import kotlin.text.set
 
 
 enum class Difficulty(val maxErrors: Int) {
@@ -96,6 +98,9 @@ fun SudokuScreen(navController: NavHostController) {
     var selectedNumber by remember { mutableStateOf<Int?>(null) }
     var showWinDialog by remember { mutableStateOf(false) }
     val isSuggestEnabled = selectedCell?.let { (row, col) -> !fixedCells[row][col] && cells[row][col] != solution[row][col] } == true
+    var noteMode by remember { mutableStateOf(false) }
+    var cellNotes by remember { mutableStateOf(mutableMapOf<Pair<Int, Int>, MutableSet<Int>>()) }
+
     if (step == 0) {
         // Step selezione difficoltà
 
@@ -161,26 +166,34 @@ fun SudokuScreen(navController: NavHostController) {
         }
 
     fun updateCell(row: Int, col: Int, value: Int) {
-        if (value in 0..9 && !fixedCells[row][col]) {
-            if (solution.isNotEmpty() && value != 0 && value != solution[row][col]) {
-               // errorCell = row to col
-                errorCells = errorCells + (row to col)
-                errorCount++
-                if (errorCount >= maxErrors) {
-                    showGameOver = true
-                }
-            } else {
+        if (noteMode) {
+            val key = row to col
+            val notes = cellNotes.getOrPut(key) { mutableSetOf() }
+            if (notes.contains(value)) notes.remove(value) else notes.add(value)
+            // Aggiorna lo stato per triggerare la recomposition
+            cellNotes = cellNotes.toMutableMap()
+        } else {
+            if (value in 0..9 && !fixedCells[row][col]) {
+                if (solution.isNotEmpty() && value != 0 && value != solution[row][col]) {
+                    // errorCell = row to col
+                    errorCells = errorCells + (row to col)
+                    errorCount++
+                    if (errorCount >= maxErrors) {
+                        showGameOver = true
+                    }
+                } else {
 
-                errorCells = errorCells - (row to col)
-            }
-            cells = cells.mapIndexed { r, rowList ->
-                if (r == row) rowList.mapIndexed { c, oldValue ->
-                    if (c == col) value else oldValue
-                }.toMutableList()
-                else rowList
-            }
-            if (checkWin()) {
-                showWinDialog = true
+                    errorCells = errorCells - (row to col)
+                }
+                cells = cells.mapIndexed { r, rowList ->
+                    if (r == row) rowList.mapIndexed { c, oldValue ->
+                        if (c == col) value else oldValue
+                    }.toMutableList()
+                    else rowList
+                }
+                if (checkWin()) {
+                    showWinDialog = true
+                }
             }
         }
     }
@@ -223,6 +236,17 @@ fun SudokuScreen(navController: NavHostController) {
                     .padding(bottom = 16.dp)
             ) {
                 Row (Modifier.align(Alignment.BottomCenter)){
+
+                    IconButton(onClick = { noteMode = !noteMode },modifier = Modifier.padding(bottom = 250.dp).size(80.dp)) {
+
+                        Icon(
+                            painter = painterResource(id = R.drawable.notes_svgrepo_com), // icona a piacere
+                            contentDescription = "Modalità note",
+                            tint = if (noteMode) Color.Blue else Color.Black,
+                            modifier = Modifier.size(55.dp)
+                        )
+                    }
+
                     Column {
                         IconButton(
                             onClick = {

@@ -162,6 +162,7 @@ fun SudokuCell(
     isHighlighted: Boolean,
     isSameNumber: Boolean,
     borderColor: Color,
+    notes: Set<Int> = emptySet(),
 ) {
     val backgroundColor = when {
       //  isError -> Color.Red.copy(alpha = 0.2f)
@@ -227,6 +228,21 @@ fun SudokuCell(
                     fontSize = 15.sp,
                     color = Color.Black
                 )
+            }
+        }else if (notes.isNotEmpty()) {
+            // Mostra le note in piccolo, ad esempio in una griglia 3x3
+            Column {
+                for (i in 1..9 step 3) {
+                    Row {
+                        for (j in i..i+2) {
+                            Text(
+                                text = if (notes.contains(j)) j.toString() else "",
+                                fontSize = 10.sp,
+                                modifier = Modifier.width(10.dp)
+                            )
+                        }
+                    }
+                }
             }
         }
     }
