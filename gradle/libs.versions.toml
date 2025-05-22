@@ -1,6 +1,6 @@
 [versions]
 activityComposeVersion = "1.7.2"
-agp = "8.9.1"
+agp = "8.10.0"
 gson = "2.10.1"
 kotlin = "2.0.21"
 coreKtx = "1.16.0"

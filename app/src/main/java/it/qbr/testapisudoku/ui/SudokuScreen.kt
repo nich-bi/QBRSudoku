@@ -231,7 +231,7 @@ fun SudokuScreen(navController: NavHostController) {
                             showNoHintsDialog = true
                         }
                     },
-                    modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 16.dp)
+                    modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 250.dp)
                 ) {
                     Text("Suggerisci Mossa")
                     if (hintsLeft > 0) {
