@@ -282,6 +282,17 @@ fun SudokuScreen(navController: NavHostController) {
                     text = { Text("Tornando alla home perderai la partita in corso.") },
                     confirmButton = {
                         TextButton(onClick = {
+
+                            CoroutineScope(Dispatchers.IO).launch {
+                                AppDatabase.getDatabase(context).partitaDao().inserisci(
+                                    Game(
+                                        dataOra = System.currentTimeMillis(),
+                                        vinta = false, // o true se vinta
+                                        tempo = seconds,
+                                        difficolta = selectedDifficulty?.name ?: ""
+                                    )
+                                )
+                            }
                             showDialog = false
                             navController.popBackStack() // Torna alla home
                         }) {
