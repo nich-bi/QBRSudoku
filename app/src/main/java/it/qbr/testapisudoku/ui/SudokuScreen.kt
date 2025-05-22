@@ -47,6 +47,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.collections.get
 import kotlin.text.compareTo
+import kotlin.text.get
 
 
 enum class Difficulty(val maxErrors: Int) {
@@ -92,7 +93,7 @@ fun SudokuScreen(navController: NavHostController) {
     var errorCells by remember { mutableStateOf<Set<Pair<Int, Int>>>(emptySet()) }
     var selectedNumber by remember { mutableStateOf<Int?>(null) }
     var showWinDialog by remember { mutableStateOf(false) }
-
+    val isSuggestEnabled = selectedCell?.let { (row, col) -> cells[row][col] == 0 } == true
 
     if (step == 0) {
         // Step selezione difficoltà
@@ -231,6 +232,7 @@ fun SudokuScreen(navController: NavHostController) {
                             showNoHintsDialog = true
                         }
                     },
+                    enabled = isSuggestEnabled,
                     modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 250.dp)
                 ) {
                     Text("Suggerisci Mossa")
