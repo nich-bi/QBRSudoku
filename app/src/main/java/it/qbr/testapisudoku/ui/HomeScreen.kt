@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.sp
 
 
 @Composable
-fun HomeScreen(onStartGame: () -> Unit) {
+fun HomeScreen(onStartGame: () -> Unit,onStorico: () -> Unit) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -49,7 +49,7 @@ fun HomeScreen(onStartGame: () -> Unit) {
                 Text(text = "Start Game", fontSize = 20.sp)
             }
             Button(
-                onClick = { /* TODO: Show settings */ },
+                onClick = onStorico,
                 shape = MaterialTheme.shapes.small,
                 modifier = Modifier
                     .padding(16.dp)
@@ -65,8 +65,4 @@ fun HomeScreen(onStartGame: () -> Unit) {
         }
     }
 }
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen(onStartGame = {})
-}
+

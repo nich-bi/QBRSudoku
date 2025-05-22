@@ -30,16 +30,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import it.qbr.testapisudoku.R
+import it.qbr.testapisudoku.db.AppDatabase
+import it.qbr.testapisudoku.db.Game
 import it.qbr.testapisudoku.model.Board
 import it.qbr.testapisudoku.network.SudokuApi
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.collections.get
+import kotlin.text.compareTo
 
 
 enum class Difficulty(val maxErrors: Int) {
@@ -64,6 +71,7 @@ enum class Difficulty(val maxErrors: Int) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SudokuScreen(navController: NavHostController) {
+    val context = LocalContext.current
     var step by remember { mutableStateOf(0) } // 0: selezione livello, 1: gioco
     var selectedDifficulty by remember { mutableStateOf<Difficulty?>(null) }
     var maxErrors by remember { mutableStateOf(10) }
@@ -83,7 +91,7 @@ fun SudokuScreen(navController: NavHostController) {
     var showDialog by remember { mutableStateOf(false) }
     var errorCells by remember { mutableStateOf<Set<Pair<Int, Int>>>(emptySet()) }
     var selectedNumber by remember { mutableStateOf<Int?>(null) }
-
+    var showWinDialog by remember { mutableStateOf(false) }
 
 
     if (step == 0) {
@@ -128,6 +136,7 @@ fun SudokuScreen(navController: NavHostController) {
         fixedCells = initialBoard.cells.map { row -> row.map { it != 0 } }
         solution = solutionBoard.cells
         loading = false
+
     }
     LaunchedEffect(loading) {
         if (!loading) {
@@ -137,6 +146,18 @@ fun SudokuScreen(navController: NavHostController) {
             }
         }
     }
+
+        fun checkWin(): Boolean {
+            if (errorCount > maxErrors) return false
+            if (cells.size != 9 || solution.size != 9) return false
+            for (r in 0..8) {
+                for (c in 0..8) {
+                    if (cells[r][c] != solution[r][c]) return false
+                }
+            }
+            return true
+        }
+
     fun updateCell(row: Int, col: Int, value: Int) {
         if (value in 0..9 && !fixedCells[row][col]) {
             if (solution.isNotEmpty() && value != 0 && value != solution[row][col]) {
@@ -156,8 +177,13 @@ fun SudokuScreen(navController: NavHostController) {
                 }.toMutableList()
                 else rowList
             }
+            if (checkWin()) {
+                showWinDialog = true
+            }
         }
     }
+
+
 
     if (loading) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -278,6 +304,18 @@ fun SudokuScreen(navController: NavHostController) {
                         text = { Text("Hai raggiunto il numero massimo di errori.\nVerrà generata una nuova partita.") },
                         confirmButton = {
                             TextButton(onClick = {
+                                // Salva la partita persa
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    AppDatabase.getDatabase(context).partitaDao().inserisci(
+                                        Game(
+                                            dataOra = System.currentTimeMillis(),
+                                            vinta = false, // o true se vinta
+                                            tempo = seconds,
+                                            difficolta = selectedDifficulty?.name ?: ""
+                                        )
+                                    )
+                                }
+
                                 // Rigenera la partita e torna alla selezione livello
                                 step = 0
                                 showGameOver = false
@@ -287,9 +325,37 @@ fun SudokuScreen(navController: NavHostController) {
                         }
                     )
                 }
+                if (showWinDialog) {
+                    AlertDialog(
+                        onDismissRequest = { },
+                        title = { Text("Hai vinto!") },
+                        text = { Text("Complimenti, hai risolto il Sudoku!") },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                // Salva la partita vinta
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    AppDatabase.getDatabase(context).partitaDao().inserisci(
+                                        Game(
+                                            dataOra = System.currentTimeMillis(),
+                                            vinta = true,
+                                            tempo = seconds,
+                                            difficolta = selectedDifficulty?.name ?: ""
+                                        )
+                                    )
+                                }
+                                // Torna alla selezione livello
+                                step = 0
+                                showWinDialog = false
+                            }) {
+                                Text("OK")
+                            }
+                        }
+                    )
+                }
+
+         }
         }
-        }
+      }
     }
-    }
-}
+ }
 
