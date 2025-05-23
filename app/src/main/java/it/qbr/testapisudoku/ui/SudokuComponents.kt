@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import it.qbr.testapisudoku.R
+import it.qbr.testapisudoku.ui.theme.gray
 import it.qbr.testapisudoku.ui.theme.light_gray
 import it.qbr.testapisudoku.ui.theme.light_primary
 import it.qbr.testapisudoku.ui.theme.light_secondary
@@ -83,11 +84,11 @@ fun SudokuTopBar(maxErr: Int, seconds: Int, errorCount: Int,onHomeClick: () -> U
         }
 
         Text(
-            text = "Errori: $errorCount / $maxErr",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
+            text = "Errori \n $errorCount / $maxErr",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Black,
             fontFamily = FontFamily(Font(R.font.segoeuithis)),
-            color = Color.Black,
+            color = gray,
 
         )
     }
