@@ -1,5 +1,6 @@
 package it.qbr.testapisudoku.ui
 
+import android.R.attr.enabled
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -37,7 +39,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import it.qbr.testapisudoku.R
+import it.qbr.testapisudoku.ui.theme.background_cell
+import it.qbr.testapisudoku.ui.theme.background_rows
+import it.qbr.testapisudoku.ui.theme.background_same_number
 import it.qbr.testapisudoku.ui.theme.blue_background
+import it.qbr.testapisudoku.ui.theme.blue_number
 import it.qbr.testapisudoku.ui.theme.blue_p
 import it.qbr.testapisudoku.ui.theme.blue_primary
 import it.qbr.testapisudoku.ui.theme.gray
@@ -133,7 +139,6 @@ fun SudokuBoard(
     grid: List<List<Int>>,
     fixedCells: List<List<Boolean>>,
     selectedCell: Pair<Int, Int>?,
-   // errorCell: Pair<Int, Int>?,
     errorCells:Set<Pair<Int, Int>>,
     selectedNumber: Int?,
     onSuggestMove: ()-> Unit,
@@ -151,10 +156,10 @@ fun SudokuBoard(
             for ((rowIdx, row) in grid.withIndex()) {
                 Row {
                    for ((colIdx, cell) in row.withIndex()) {
-                     val thickTop = if (rowIdx == 0) 3.dp else if (rowIdx % 3 == 0) 3.dp else 0.5.dp
-                        val thickLeft = if (colIdx == 0) 3.dp else if (colIdx % 3 == 0) 3.dp else 0.5.dp
-                        val thickRight = if (colIdx == 8) 3.dp else if ((colIdx + 1) % 3 == 0) 3.dp else 0.5.dp
-                        val thickBottom = if (rowIdx == 8) 3.dp else if ((rowIdx + 1) % 3 == 0) 3.dp else 0.5.dp
+                        val thickTop = if (rowIdx == 0) 3.dp else if (rowIdx % 3 == 0) 2.dp else 0.5.dp
+                        val thickLeft = if (colIdx == 0) 3.dp else if (colIdx % 3 == 0) 2.dp else 0.5.dp
+                        val thickRight = if (colIdx == 8) 3.dp else if ((colIdx + 1) % 3 == 0) 2.dp else 0.5.dp
+                        val thickBottom = if (rowIdx == 8) 3.dp else if ((rowIdx + 1) % 3 == 0) 2.dp else 0.5.dp
 
                         val isHighlighted = selectedCell?.let { (selRow, selCol) ->
                             rowIdx == selRow ||
@@ -176,7 +181,7 @@ fun SudokuBoard(
                             borderBottom = thickBottom,
                             borderColor = Color.Black
                         )
-                    }
+                   }
                 }
             }
         }
@@ -201,17 +206,25 @@ fun SudokuCell(
     notes: Set<Int> = emptySet(),
 ) {
     val backgroundColor = when {
-      //  isError -> Color.Red.copy(alpha = 0.2f)
-        isSelected -> light_gray.copy(alpha = 0.5f)
-        isHighlighted -> light_gray
+        isHighlighted -> background_rows
+        isSelected -> background_cell
+        isSameNumber-> background_same_number
         else -> Color.White
     }
 
+    val numberColor = when {
+        isError -> Color.Red
+        isFixed -> Color.Black
+        else -> blue_number
+    }
+
+    /*
     val circularShapeColor = when {
         isError -> Color.Red.copy(alpha = 0.2f)
         isSameNumber-> light_primary
         else -> light_secondary
     }
+     */
 
     Box(
         contentAlignment = Alignment.Center,
@@ -249,20 +262,22 @@ fun SudokuCell(
                     strokeWidth = borderBottom.toPx()
                 )
             }
-            .clickable(enabled = !isFixed, onClick = onClick)
+            .clickable{ onClick() } // cliccabile anche numeri fissi
+            // .clickable(enabled = !isFixed, onClick = onClick)
     ) {
         if (value != 0) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .size(32.dp)
-                    .background(circularShapeColor, shape = CircleShape)
+                    // .background(circularShapeColor, shape = CircleShape)
             ) {
                 Text(
                     text = value.toString(),
-                    style = MaterialTheme.typography.labelSmall,
-                    fontSize = 15.sp,
-                    color = Color.Black
+                    // style = MaterialTheme.typography.,
+                    fontSize = 27.sp,
+                    color = numberColor,
+                    fontWeight = FontWeight.Normal
                 )
             }
         }else if (notes.isNotEmpty()) {
@@ -305,15 +320,15 @@ fun SudokuKeypad(onNumberSelected: (Int) -> Unit) {
                         .padding(8.dp)
                         .size(60.dp)
                         .clip(RoundedCornerShape(10.dp))
-                        .border(1.dp, gray, RoundedCornerShape(10.dp))
-                        .background(blue_background)
+                        // .border(1.dp, gray, RoundedCornerShape(10.dp))
+                        .background(background_same_number)
                         .clickable { onNumberSelected(number) },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = number.toString(),
                         style = MaterialTheme.typography.bodyLarge,
-                        fontSize = 22.sp,
+                        fontSize = 25.sp,
                         color = blue_p,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -332,14 +347,14 @@ fun SudokuKeypad(onNumberSelected: (Int) -> Unit) {
                         .padding(8.dp)
                         .size(60.dp)
                         .clip(RoundedCornerShape(10.dp))
-                        .border(1.dp, gray, RoundedCornerShape(10.dp))
-                        .background(blue_background)
+                        .border(1.dp, background_same_number)
+                        .background(background_same_number)
                         .clickable { onNumberSelected(number) },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = number.toString(),
-                        fontSize = 22.sp,
+                        fontSize = 25.sp,
                         color = blue_p,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -347,7 +362,6 @@ fun SudokuKeypad(onNumberSelected: (Int) -> Unit) {
             }
 
         }
-
     }
 }
 

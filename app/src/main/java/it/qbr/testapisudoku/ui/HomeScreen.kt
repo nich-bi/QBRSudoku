@@ -2,6 +2,7 @@ package it.qbr.testapisudoku.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -41,7 +42,7 @@ fun HomeScreen(onStartGame: () -> Unit,onStorico: () -> Unit) {
 
             Button(
                 onClick = onStartGame,
-                shape = MaterialTheme.shapes.small,
+                shape = RoundedCornerShape(50.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = blue_primary),
                 modifier = Modifier
                     .padding(16.dp)
@@ -52,12 +53,11 @@ fun HomeScreen(onStartGame: () -> Unit,onStorico: () -> Unit) {
 
             Button(
                 onClick = onStorico,
-                shape = MaterialTheme.shapes.small,
+                shape = RoundedCornerShape(50.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = blue_primary),
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth(0.5f)
-
             ) {
                 Text(text = "Storico Partite", fontSize = 20.sp)
             }
