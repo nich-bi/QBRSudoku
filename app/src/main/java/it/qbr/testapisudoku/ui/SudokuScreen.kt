@@ -1,5 +1,6 @@
 package it.qbr.testapisudoku.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -47,15 +47,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.collections.get
 import kotlin.collections.getOrPut
-import kotlin.text.compareTo
-import kotlin.text.get
-import kotlin.text.set
+
+const val maxErrEasy = 10
+const val maxErrMid = 5
+const val maxErrHard = 2
+const val maxErrImpossible = 0
 
 
 enum class Difficulty(val maxErrors: Int) {
-    FACILE(10), MEDIO(5), DIFFICILE(2), IMPOSSIBILE(0)
+    EASY(maxErrEasy), MID(maxErrMid), HARD(maxErrHard), IMPOSSIBLE(maxErrImpossible)
 }
 
 /**
@@ -73,13 +74,14 @@ enum class Difficulty(val maxErrors: Int) {
  *
  * @param navController The NavHostController used for navigation.
  */
+@SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SudokuScreen(navController: NavHostController) {
     val context = LocalContext.current
-    var step by remember { mutableStateOf(0) } // 0: selezione livello, 1: gioco
+    var step by remember { mutableIntStateOf(0) } // 0: selezione livello, 1: gioco
     var selectedDifficulty by remember { mutableStateOf<Difficulty?>(null) }
-    var maxErrors by remember { mutableStateOf(10) }
+    var maxErrors by remember { mutableIntStateOf(10) }
     var errorCount by remember { mutableIntStateOf(0) }
     var showGameOver by remember { mutableStateOf(false) }
     var hintsLeft by remember { mutableIntStateOf(3) }
@@ -129,6 +131,7 @@ fun SudokuScreen(navController: NavHostController) {
                     },
                     Modifier.padding(8.dp)
                 ) {
+                    // da cambiare (per localizzazione app: it, eng, ...)
                     Text(diff.name.lowercase().replaceFirstChar { it.uppercase() })
                 }
             }
@@ -217,7 +220,7 @@ fun SudokuScreen(navController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             )
             {
-                SudokuTopBar(seconds = seconds, errorCount = errorCount,onHomeClick = { showDialog = true } )
+                SudokuTopBar(maxErr = maxErrors ,seconds = seconds, errorCount = errorCount,onHomeClick = { showDialog = true } )
                 Spacer(Modifier.height(14.dp))
                 SudokuBoard(
                     grid = cells,

@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import it.qbr.testapisudoku.R
 import it.qbr.testapisudoku.ui.theme.light_gray
@@ -44,7 +45,7 @@ import it.qbr.testapisudoku.ui.theme.white
 
 
 @Composable
-fun SudokuTopBar(seconds: Int, errorCount: Int,onHomeClick: () -> Unit) {
+fun SudokuTopBar(maxErr: Int, seconds: Int, errorCount: Int,onHomeClick: () -> Unit) {
     val minutes = seconds / 60
     val secs = seconds % 60
 
@@ -80,8 +81,9 @@ fun SudokuTopBar(seconds: Int, errorCount: Int,onHomeClick: () -> Unit) {
                 color = Color.Black
             )
         }
+
         Text(
-            text = "Errori: $errorCount",
+            text = "Errori: $errorCount / $maxErr",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = FontFamily(Font(R.font.segoeuithis)),

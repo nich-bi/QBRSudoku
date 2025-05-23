@@ -18,7 +18,13 @@ object SudokuApi {
 
         val response = client.newCall(request).execute()
 
-        if (!response.isSuccessful) throw Exception("Errore HTTP: ${response.code}")
+        if (!response.isSuccessful){
+            println("errore HTTP")
+            throw Exception("Errore HTTP: ${response.code}")
+        }else{
+            println("HTTP ok")
+
+        }
 
         val body = response.body?.string() ?: throw Exception("Risposta vuota")
         val onlineResponse = Gson().fromJson(body, OnlineResponseDto::class.java)
