@@ -11,3 +11,11 @@ val light_error = Color(0xFFBA1A1A)
 val white = Color(0xFFFFFFFF)
 val gray = Color(0xFF595959)
 val light_gray = Color(0xFFd7d7d7)
+
+
+
+val blue_p = Color(0xff325aaf)
+val blue_background = Color(0xffeaeef4)
+val blue_primary = Color(0xff5a7bc0)
+
+

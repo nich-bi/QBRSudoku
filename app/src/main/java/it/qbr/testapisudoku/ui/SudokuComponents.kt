@@ -37,6 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import it.qbr.testapisudoku.R
+import it.qbr.testapisudoku.ui.theme.blue_background
+import it.qbr.testapisudoku.ui.theme.blue_p
+import it.qbr.testapisudoku.ui.theme.blue_primary
 import it.qbr.testapisudoku.ui.theme.gray
 import it.qbr.testapisudoku.ui.theme.light_gray
 import it.qbr.testapisudoku.ui.theme.light_primary
@@ -68,6 +71,24 @@ fun SudokuTopBar(maxErr: Int, seconds: Int, errorCount: Int,onHomeClick: () -> U
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "Tempo",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily(Font(R.font.segoeuithis)),
+                    color = gray
+                )
+
+                Text(
+                    text = "%02d:%02d".format(minutes, secs),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily(Font(R.font.segoeuithis)),
+                    color = gray
+                )
+            }
+            /*
             Image(
                 painter = painterResource(id = R.drawable.stopwatch_svgrepo_com),
                 contentDescription = "Icona timer",
@@ -81,16 +102,28 @@ fun SudokuTopBar(maxErr: Int, seconds: Int, errorCount: Int,onHomeClick: () -> U
                 fontFamily = FontFamily(Font(R.font.segoeuithis)),
                 color = Color.Black
             )
+
+             */
         }
 
-        Text(
-            text = "Errori \n $errorCount / $maxErr",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Black,
-            fontFamily = FontFamily(Font(R.font.segoeuithis)),
-            color = gray,
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "Errori",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Black,
+                fontFamily = FontFamily(Font(R.font.segoeuithis)),
+                color = gray,
+            )
 
-        )
+            Text(
+                text = "$errorCount / $maxErr",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Black,
+                fontFamily = FontFamily(Font(R.font.segoeuithis)),
+                color = gray,
+            )
+        }
+
     }
 }
 
@@ -269,20 +302,20 @@ fun SudokuKeypad(onNumberSelected: (Int) -> Unit) {
             for (number in 1..5) {
                 Box(
                     modifier = Modifier
-                        .padding(10.dp)
-                        .size(55.dp)
+                        .padding(8.dp)
+                        .size(60.dp)
                         .clip(RoundedCornerShape(10.dp))
-                        .border(2.dp, light_primary, RoundedCornerShape(10.dp))
-                        .background(white)
+                        .border(1.dp, gray, RoundedCornerShape(10.dp))
+                        .background(blue_background)
                         .clickable { onNumberSelected(number) },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = number.toString(),
-                        style = MaterialTheme.typography.labelSmall,
-                        fontSize = 20.sp,
-                        color = Color.Black,
-                        fontWeight = FontWeight.Light
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 22.sp,
+                        color = blue_p,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }
@@ -296,20 +329,19 @@ fun SudokuKeypad(onNumberSelected: (Int) -> Unit) {
             for (number in 6..9) {
                 Box(
                     modifier = Modifier
-                        .padding(10.dp)
-                        .size(55.dp)
+                        .padding(8.dp)
+                        .size(60.dp)
                         .clip(RoundedCornerShape(10.dp))
-                        .border(2.dp, light_primary, RoundedCornerShape(10.dp))
-                        .background(white)
-                        .border(2.dp, Color.Black, RectangleShape)
+                        .border(1.dp, gray, RoundedCornerShape(10.dp))
+                        .background(blue_background)
                         .clickable { onNumberSelected(number) },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = number.toString(),
-                        fontSize = 20.sp,
-                        color = Color.Black,
-                        fontWeight = FontWeight.Light
+                        fontSize = 22.sp,
+                        color = blue_p,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }

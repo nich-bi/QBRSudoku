@@ -42,6 +42,7 @@ import it.qbr.testapisudoku.db.AppDatabase
 import it.qbr.testapisudoku.db.Game
 import it.qbr.testapisudoku.model.Board
 import it.qbr.testapisudoku.network.SudokuApi
+import it.qbr.testapisudoku.ui.theme.blue_p
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -243,10 +244,10 @@ fun SudokuScreen(navController: NavHostController) {
                     IconButton(onClick = { noteMode = !noteMode },modifier = Modifier.padding(bottom = 250.dp).size(80.dp)) {
 
                         Icon(
-                            painter = painterResource(id = R.drawable.notes_svgrepo_com), // icona a piacere
+                            painter = painterResource(id = R.drawable.notes_svgrepo_com),
                             contentDescription = "Modalità note",
                             tint = if (noteMode) Color.Blue else Color.Black,
-                            modifier = Modifier.size(55.dp)
+                            modifier = Modifier.size(40.dp)
                         )
                     }
 
@@ -260,9 +261,9 @@ fun SudokuScreen(navController: NavHostController) {
                             modifier = Modifier.padding(bottom = 250.dp).size(80.dp)
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_eraser_24), // Sostituisci con la tua icona
+                                painter = painterResource(id = R.drawable.ic_eraser_24),
                                 contentDescription = "Cancella cella",
-                                modifier = Modifier.size(55.dp)
+                                modifier = Modifier.size(40.dp)
                             )
 
                         }
@@ -287,14 +288,14 @@ fun SudokuScreen(navController: NavHostController) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_lightbulb_stars_24),
                             contentDescription = "Suggerimento",
-                            modifier = Modifier.size(55.dp)
+                            modifier = Modifier.size(40.dp)
                         )
                         if (hintsLeft > 0) {
                             Box(
                                 modifier = Modifier
-                                    .size(15.dp)
+                                    .size(16.dp)
                                     .offset(x = 8.dp, y = (12).dp)
-                                    .background(Color.Red, shape = CircleShape),
+                                    .background(blue_p, shape = CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
