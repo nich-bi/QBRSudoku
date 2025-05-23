@@ -10,7 +10,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import it.qbr.testapisudoku.ui.theme.blue_background
+import it.qbr.testapisudoku.ui.theme.blue_primary
 
 @Composable
 fun HomeScreen(onStartGame: () -> Unit,onStorico: () -> Unit) {
@@ -40,19 +41,23 @@ fun HomeScreen(onStartGame: () -> Unit,onStorico: () -> Unit) {
 
             Button(
                 onClick = onStartGame,
-                shape = MaterialTheme.shapes.small, //il bottone non deve essere rotono
+                shape = MaterialTheme.shapes.small,
+                colors = ButtonDefaults.buttonColors(containerColor = blue_primary),
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth(0.5f)
             ) {
                 Text(text = "Start Game", fontSize = 20.sp)
             }
+
             Button(
                 onClick = onStorico,
                 shape = MaterialTheme.shapes.small,
+                colors = ButtonDefaults.buttonColors(containerColor = blue_primary),
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth(0.5f)
+
             ) {
                 Text(text = "Storico Partite", fontSize = 20.sp)
             }
