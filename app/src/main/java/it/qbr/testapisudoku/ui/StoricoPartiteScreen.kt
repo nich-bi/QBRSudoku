@@ -5,7 +5,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +30,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
+enum class FiltroVittoria(val label: String) { TUTTE("Tutte"), VINTE("Vinte"), PERSE("Perse") }
+enum class Ordinamento(val label: String) { CRONO("Data"), TEMPO("Tempo di gioco") }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,13 +39,43 @@ fun StoricoPartiteScreen(navController: NavHostController) {
     val context = LocalContext.current
     var storico by remember { mutableStateOf<List<Game>>(emptyList()) }
     val scope = rememberCoroutineScope()
-    // Stato per gli elementi espansi
     val expandedStates = remember { mutableStateMapOf<Long, Boolean>() }
+
+    // Stati per i filtri
+    var filtroVittoria by remember { mutableStateOf(FiltroVittoria.TUTTE) }
+    var ordinamento by remember { mutableStateOf(Ordinamento.CRONO) }
+    var ordineDecrescente by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         scope.launch(Dispatchers.IO) {
             storico = AppDatabase.getDatabase(context).partitaDao().tutteLePartite()
         }
+    }
+
+    // Applica filtri e ordinamento
+    val storicoFiltratoOrdinato = remember(storico, filtroVittoria, ordinamento, ordineDecrescente) {
+        storico
+            .filter {
+                when (filtroVittoria) {
+                    FiltroVittoria.TUTTE -> true
+                    FiltroVittoria.VINTE -> it.vinta
+                    FiltroVittoria.PERSE -> !it.vinta
+                }
+            }
+            .let { lista ->
+                when (ordinamento) {
+                    Ordinamento.CRONO ->
+                        if (ordineDecrescente)
+                            lista.sortedByDescending { it.dataOra }
+                        else
+                            lista.sortedBy { it.dataOra }
+                    Ordinamento.TEMPO ->
+                        if (ordineDecrescente)
+                            lista.sortedByDescending { it.tempo }
+                        else
+                            lista.sortedBy { it.tempo }
+                }
+            }
     }
 
     Scaffold(
@@ -60,85 +94,133 @@ fun StoricoPartiteScreen(navController: NavHostController) {
             )
         }
     ) { padding ->
-        if (storico.isEmpty()) {
-            Box(
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            // Sezione filtri
+            Card(
                 Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE0F1FF)),
+                shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Nessuna partita giocata", style = MaterialTheme.typography.titleMedium)
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("Filtra:", modifier = Modifier.padding(end = 8.dp))
+                        // Filtro vittoria
+                        FiltroTab(
+                            options = FiltroVittoria.entries,
+                            selected = filtroVittoria,
+                            onSelect = { filtroVittoria = it }
+                        )
+                    }
+                    Spacer(Modifier.height(6.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("Ordina per:", modifier = Modifier.padding(end = 8.dp))
+                        // Ordinamento
+                        FiltroTab(
+                            options = Ordinamento.entries,
+                            selected = ordinamento,
+                            onSelect = { ordinamento = it }
+                        )
+                        // Ordine crescente/decrescente
+                        IconButton(
+                            onClick = { ordineDecrescente = !ordineDecrescente }
+                        ) {
+                            Icon(
+                                painter = painterResource(
+                                    id = if (ordineDecrescente) R.drawable.ic_arrow_down else R.drawable.ic_arrow_up
+                                ),
+                                contentDescription = "Inverti ordine",
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
+                    }
+                }
             }
-        } else {
-            LazyColumn(
-                contentPadding = padding,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(storico) { partita ->
-                    val expanded = expandedStates[partita.dataOra] == true
-                    Card(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp)
-                            .clickable {
-                                // Inverti lo stato di espansione
-                                expandedStates[partita.dataOra] = !(expandedStates[partita.dataOra] ?: false)
-                            },
-                        colors = CardDefaults.cardColors(
-                            containerColor = if (partita.vinta) Color(0xFFD0F5E8) else Color(0xFFFFE0E0)
-                        ),
-                        elevation = CardDefaults.cardElevation(4.dp)
-                    ) {
-                        Column {
-                            Row(
-                                Modifier
-                                    .padding(12.dp)
-                                    .fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    painter = painterResource(
-                                        id = if (partita.vinta) R.drawable.ic_win else R.drawable.ic_lose
-                                    ),
-                                    contentDescription = null,
-                                    tint = if (partita.vinta) Color(0xFF2E7D32) else Color(0xFFC62828),
-                                    modifier = Modifier.size(36.dp)
-                                )
-                                Spacer(Modifier.width(16.dp))
-                                Column(Modifier.weight(1f)) {
-                                    Text(
-                                        SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault()).format(Date(partita.dataOra)),
-                                        style = MaterialTheme.typography.titleMedium
+
+            if (storicoFiltratoOrdinato.isEmpty()) {
+                Box(
+                    Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Nessuna partita trovata", style = MaterialTheme.typography.titleMedium)
+                }
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(storicoFiltratoOrdinato) { partita ->
+                        val expanded = expandedStates[partita.dataOra] == true
+                        Card(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 12.dp)
+                                .clickable {
+                                    expandedStates[partita.dataOra] = !(expandedStates[partita.dataOra] ?: false)
+                                },
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (partita.vinta) Color(0xFFD0F5E8) else Color(0xFFFFE0E0)
+                            ),
+                            elevation = CardDefaults.cardElevation(4.dp)
+                        ) {
+                            Column {
+                                Row(
+                                    Modifier
+                                        .padding(12.dp)
+                                        .fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        painter = painterResource(
+                                            id = if (partita.vinta) R.drawable.ic_win else R.drawable.ic_lose
+                                        ),
+                                        contentDescription = null,
+                                        tint = if (partita.vinta) Color(0xFF2E7D32) else Color(0xFFC62828),
+                                        modifier = Modifier.size(36.dp)
                                     )
+                                    Spacer(Modifier.width(16.dp))
+                                    Column(Modifier.weight(1f)) {
+                                        Text(
+                                            SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault()).format(Date(partita.dataOra)),
+                                            style = MaterialTheme.typography.titleMedium
+                                        )
+                                        Text(
+                                            "Tempo: ${partita.tempo} sec  •  Difficoltà: ${partita.difficolta}",
+                                            style = MaterialTheme.typography.bodyMedium
+                                        )
+                                        Text(
+                                            "Errori: ${partita.errori}",
+                                            style = MaterialTheme.typography.bodyMedium
+                                        )
+                                    }
+                                    Spacer(Modifier.width(8.dp))
                                     Text(
-                                        "Tempo: ${partita.tempo} sec  •  Difficoltà: ${partita.difficolta}",
-                                        style = MaterialTheme.typography.bodyMedium
-                                    )
-                                    Text(
-                                        "Errori: ${partita.errori}",
-                                        style = MaterialTheme.typography.bodyMedium
+                                        if (partita.vinta) "Vinta" else "Persa",
+                                        color = if (partita.vinta) Color(0xFF2E7D32) else Color(0xFFC62828),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold
                                     )
                                 }
-                                Spacer(Modifier.width(8.dp))
-                                Text(
-                                    if (partita.vinta) "Vinta" else "Persa",
-                                    color = if (partita.vinta) Color(0xFF2E7D32) else Color(0xFFC62828),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                            // Espandi quando cliccata
-                            if (expanded) {
-                                Divider()
-                                // Mostra la tabella finale qui
-                                partita.finalBard?.let { boardFinaleJson ->
-                                    SudokuBoardPreview(boardFinaleJson)
-                                } ?: Text(
-                                    "Nessuna tabella finale salvata.",
-                                    Modifier.padding(12.dp),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.Gray
-                                )
+                                if (expanded) {
+                                    Divider()
+                                    partita.finalBard?.let { boardFinaleJson ->
+                                        SudokuBoardPreview(boardFinaleJson)
+                                    } ?: Text(
+                                        "Nessuna tabella finale salvata.",
+                                        Modifier.padding(12.dp),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = Color.Gray
+                                    )
+                                }
                             }
                         }
                     }
@@ -148,8 +230,44 @@ fun StoricoPartiteScreen(navController: NavHostController) {
     }
 }
 
+// Composable per tab di filtro/ordinamento
+@Composable
+fun <T> FiltroTab(options: List<T>, selected: T, onSelect: (T) -> Unit) where T : Enum<T> {
+    val selectedTabIndex = options.indexOf(selected)
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        color = Color(0xFFFFFFFF), // opzionale: stesso colore sfondo card filtro
+        shadowElevation = 2.dp
+    ) {
+        TabRow(
+            selectedTabIndex = selectedTabIndex,
+            divider = {},
+            containerColor = Color.Transparent,
+            indicator = { tabPositions ->
+                TabRowDefaults.Indicator(
+                    Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                    color = Color(0xFF1976D2) // Blu
+                )
+            }
+        ) {
+            options.forEachIndexed { i, opzione ->
+                Tab(
+                    selected = selected == opzione,
+                    onClick = { onSelect(opzione) },
+                    text = {
+                        Text(
+                            opzione.name.replaceFirstChar { it.uppercase() },
+                            fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                            color = Color.Black
+                        )
+                    }
+                )
+            }
+        }
+    }
+}
 
-// Funzione che deserializza una board (stringa JSON) e la mostra in griglia semplice
+
 @Composable
 fun SudokuBoardPreview(boardJson: String) {
     val board: List<List<Int>> = remember(boardJson) {
@@ -166,10 +284,9 @@ fun SudokuBoardPreview(boardJson: String) {
         // Box per centrare la griglia
         Box(
             Modifier
-                .fillMaxWidth(), // Usa tutta la larghezza disponibile
-            contentAlignment = Alignment.Center // Centra il contenuto
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
         ) {
-            // Bordo esterno spesso per tutta la tabella
             Box(
                 Modifier
                     .border(2.dp, Color.Black)
