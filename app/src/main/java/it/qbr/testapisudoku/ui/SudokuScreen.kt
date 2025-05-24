@@ -231,7 +231,9 @@ fun SudokuScreen(navController: NavHostController) {
                     selectedCell = selectedCell,
                     errorCells = errorCells,
                     selectedNumber = selectedNumber,
-                    onCellSelected = { row, col -> if (!fixedCells[row][col]) selectedCell = row to col },
+//                    onCellSelected = { row, col -> if (!fixedCells[row][col]) selectedCell = row to col },
+                    onCellSelected = { row, col -> selectedCell = row to col
+                                        selectedNumber = if (cells[row][col] != 0) cells[row][col] else null},
                     onSuggestMove = { }
                 )
             }
