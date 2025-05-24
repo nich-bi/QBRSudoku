@@ -92,11 +92,15 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                             Spacer(Modifier.width(16.dp))
                             Column(Modifier.weight(1f)) {
                                 Text(
-                                    SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(Date(partita.dataOra)),
+                                    SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault()).format(Date(partita.dataOra)),
                                     style = MaterialTheme.typography.titleMedium
                                 )
                                 Text(
                                     "Tempo: ${partita.tempo} sec  •  Difficoltà: ${partita.difficolta}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Text(
+                                    "Errori: ${partita.errori}",
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             }

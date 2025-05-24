@@ -2,7 +2,6 @@ package it.qbr.testapisudoku.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +22,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -46,6 +44,7 @@ import it.qbr.testapisudoku.R
 import it.qbr.testapisudoku.db.AppDatabase
 import it.qbr.testapisudoku.db.Game
 import it.qbr.testapisudoku.model.Board
+import it.qbr.testapisudoku.model.Difficulty
 import it.qbr.testapisudoku.network.SudokuApi
 import it.qbr.testapisudoku.ui.theme.blue_p
 import it.qbr.testapisudoku.ui.theme.blue_primary
@@ -54,17 +53,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.collections.getOrPut
 
-const val maxErrEasy = 10
-const val maxErrMid = 5
-const val maxErrHard = 2
-const val maxErrImpossible = 0
-
-
-enum class Difficulty(val maxErrors: Int) {
-    EASY(maxErrEasy), MID(maxErrMid), HARD(maxErrHard), IMPOSSIBLE(maxErrImpossible)
-}
 
 /**
  * Composable function for the Sudoku game screen.
