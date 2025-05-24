@@ -367,7 +367,8 @@ fun SudokuScreen(navController: NavHostController) {
                                         dataOra = System.currentTimeMillis(),
                                         vinta = false, // o true se vinta
                                         tempo = seconds,
-                                        difficolta = selectedDifficulty?.name ?: ""
+                                        difficolta = selectedDifficulty?.name ?: "",
+                                        errori = errorCount
                                     )
                                 )
                             }
@@ -400,7 +401,8 @@ fun SudokuScreen(navController: NavHostController) {
                                             dataOra = System.currentTimeMillis(),
                                             vinta = false, // o true se vinta
                                             tempo = seconds,
-                                            difficolta = selectedDifficulty?.name ?: ""
+                                            difficolta = selectedDifficulty?.name ?: "",
+                                            errori = errorCount
                                         )
                                     )
                                 }
@@ -428,7 +430,8 @@ fun SudokuScreen(navController: NavHostController) {
                                             dataOra = System.currentTimeMillis(),
                                             vinta = true,
                                             tempo = seconds,
-                                            difficolta = selectedDifficulty?.name ?: ""
+                                            difficolta = selectedDifficulty?.name ?: "",
+                                            errori = errorCount
                                         )
                                     )
                                 }

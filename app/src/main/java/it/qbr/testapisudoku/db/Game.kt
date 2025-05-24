@@ -9,5 +9,6 @@ data class Game(
     val dataOra: Long,
     val vinta: Boolean,
     val tempo: Int,
-    val difficolta: String
+    val difficolta: String,
+    val errori: Int
 )
