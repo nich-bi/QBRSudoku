@@ -251,6 +251,12 @@ fun SudokuScreen(navController: NavHostController) {
                             tint = if (noteMode) Color.Blue else Color.Black,
                             modifier = Modifier.size(40.dp)
                         )
+                        Text(
+                            text = "Note",
+                            fontSize = 12.sp,
+                            color = Color.Black,
+                            modifier = Modifier.padding(top = 55.dp),
+                            fontWeight = FontWeight.SemiBold)
                     }
 
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -297,8 +303,17 @@ fun SudokuScreen(navController: NavHostController) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_lightbulb_stars_24),
                             contentDescription = "Suggerimento",
-                            modifier = Modifier.size(40.dp)
+                            modifier = Modifier
+                                .size(40.dp)
                         )
+                        Text(
+                            text = "Sugg",
+                            fontSize = 12.sp,
+                            color = Color.Black,
+                            modifier = Modifier.padding(top = 55.dp),
+                            fontWeight = FontWeight.SemiBold
+                        )
+
                         if (hintsLeft > 0) {
                             Box(
                                 modifier = Modifier
