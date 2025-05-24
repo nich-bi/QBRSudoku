@@ -21,7 +21,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
+
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -74,7 +74,7 @@ import kotlinx.coroutines.withContext
  * @param navController The NavHostController used for navigation.
  */
 @SuppressLint("MutableCollectionMutableState")
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun SudokuScreen(navController: NavHostController) {
     val context = LocalContext.current
@@ -102,8 +102,6 @@ fun SudokuScreen(navController: NavHostController) {
     val isSuggestEnabled = selectedCell?.let { (row, col) -> !fixedCells[row][col] && cells[row][col] != solution[row][col] } == true
     var noteMode by remember { mutableStateOf(false) }
     var cellNotes by remember { mutableStateOf(mutableMapOf<Pair<Int, Int>, MutableSet<Int>>()) }
-    val boardPair = remember { mutableStateOf<Pair<Board, Board>?>(null) }
-    val error = remember { mutableStateOf<String?>(null) }
 
 
     fun isNumberInAllBlocks(cells: List<List<Int>>, number: Int): Boolean {
