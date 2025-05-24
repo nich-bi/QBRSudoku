@@ -323,7 +323,7 @@ fun SudokuKeypad(
                         .clip(RoundedCornerShape(10.dp))
                         // .border(1.dp, gray, RoundedCornerShape(10.dp))
                         .background(background_same_number)
-                        .clickable { onNumberSelected(number) },
+                        .clickable(enabled = !isDisabled) { onNumberSelected(number) },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(

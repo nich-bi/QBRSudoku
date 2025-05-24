@@ -91,8 +91,6 @@ fun SudokuScreen(navController: NavHostController) {
     var cells by remember { mutableStateOf<List<MutableList<Int>>>(emptyList()) }
     var fixedCells by remember { mutableStateOf<List<List<Boolean>>>(emptyList()) }
     var solution by remember { mutableStateOf<List<List<Int>>>(emptyList()) }
-    var errorCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
     var seconds by remember { mutableIntStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
     var errorCells by remember { mutableStateOf<Set<Pair<Int, Int>>>(emptySet()) }
@@ -104,25 +102,7 @@ fun SudokuScreen(navController: NavHostController) {
     var cellNotes by remember { mutableStateOf(mutableMapOf<Pair<Int, Int>, MutableSet<Int>>()) }
 
 
-    fun isNumberInAllBlocks(cells: List<List<Int>>, number: Int): Boolean {
-        if (cells.size != 9 || cells.any { it.size != 9 }) return false
-        for (blockRow in 0 until 3) {
-            for (blockCol in 0 until 3) {
-                var found = false
-                for (row in blockRow * 3 until blockRow * 3 + 3) {
-                    for (col in blockCol * 3 until blockCol * 3 + 3) {
-                        if (cells[row][col] == number) {
-                            found = true
-                            break
-                        }
-                    }
-                    if (found) break
-                }
-                if (!found) return false
-            }
-        }
-        return true
-    }
+
     LaunchedEffect(cells) {
         completedNumbers.clear()
         for (n in 1..9) {
@@ -499,22 +479,6 @@ fun SudokuScreen(navController: NavHostController) {
         }
       }
     }
- }
-
-fun isNumberInAllBlocks(cells: List<List<Int>>, number: Int): Boolean {
-    for (blockRow in 0..2) {
-        for (blockCol in 0..2) {
-            var found = false
-            for (r in 0..2) {
-                for (c in 0..2) {
-                    if (cells[blockRow * 3 + r][blockCol * 3 + c] == number) {
-                        found = true
-                    }
-                }
-            }
-            if (!found) return false
-        }
-    }
-    return true
 }
+
 
