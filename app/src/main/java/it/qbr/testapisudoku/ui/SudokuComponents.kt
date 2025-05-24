@@ -1,6 +1,9 @@
 package it.qbr.testapisudoku.ui
 
+import android.R.attr.enabled
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,23 +26,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import it.qbr.testapisudoku.R
 import it.qbr.testapisudoku.ui.theme.background_cell
 import it.qbr.testapisudoku.ui.theme.background_rows
 import it.qbr.testapisudoku.ui.theme.background_same_number
+import it.qbr.testapisudoku.ui.theme.blue_background
 import it.qbr.testapisudoku.ui.theme.blue_number
 import it.qbr.testapisudoku.ui.theme.blue_p
+import it.qbr.testapisudoku.ui.theme.blue_primary
 import it.qbr.testapisudoku.ui.theme.gray
-import it.qbr.testapisudoku.utils.PreferencesConstants
+
+
+
 
 @Composable
 fun SudokuTopBar(maxErr: Int, seconds: Int, errorCount: Int,onHomeClick: () -> Unit) {
@@ -204,8 +215,13 @@ fun SudokuCell(
         else -> blue_number
     }
 
-
-
+    /*
+    val circularShapeColor = when {
+        isError -> Color.Red.copy(alpha = 0.2f)
+        isSameNumber-> light_primary
+        else -> light_secondary
+    }
+     */
 
     Box(
         contentAlignment = Alignment.Center,
@@ -244,17 +260,18 @@ fun SudokuCell(
                 )
             }
             .clickable{ onClick() } // cliccabile anche numeri fissi
-
+            // .clickable(enabled = !isFixed, onClick = onClick)
     ) {
         if (value != 0) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .size(32.dp)
-
+                    // .background(circularShapeColor, shape = CircleShape)
             ) {
                 Text(
                     text = value.toString(),
+                    // style = MaterialTheme.typography.,
                     fontSize = 27.sp,
                     color = numberColor,
                     fontWeight = FontWeight.Normal
@@ -284,8 +301,7 @@ fun SudokuCell(
 @Composable
 fun SudokuKeypad(
     onNumberSelected: (Int) -> Unit,
-    disabledNumbers: List<Int>,
-    isDisabled: Boolean = false
+    disabledNumbers: List<Int>
 ) {
     Column(
         Modifier
@@ -305,15 +321,16 @@ fun SudokuKeypad(
                         .padding(8.dp)
                         .size(60.dp)
                         .clip(RoundedCornerShape(10.dp))
-                        .background(if (isDisabled) gray else background_same_number)
-                        .clickable(enabled = !isDisabled){ onNumberSelected(number) },
+                        // .border(1.dp, gray, RoundedCornerShape(10.dp))
+                        .background(background_same_number)
+                        .clickable(enabled = !isDisabled) { onNumberSelected(number) },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = number.toString(),
                         style = MaterialTheme.typography.bodyLarge,
                         fontSize = 25.sp,
-                        color = if (isDisabled) Color.White else blue_p,
+                        color = blue_p,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -332,14 +349,14 @@ fun SudokuKeypad(
                         .padding(8.dp)
                         .size(60.dp)
                         .clip(RoundedCornerShape(10.dp))
-                        .background(if (isDisabled) gray else background_same_number)
+                        .background(background_same_number)
                         .clickable(enabled = !isDisabled) { onNumberSelected(number) },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = number.toString(),
                         fontSize = 25.sp,
-                        color =if (isDisabled) Color.White else blue_p,
+                        color = blue_p,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
