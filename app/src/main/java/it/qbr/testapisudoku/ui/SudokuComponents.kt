@@ -47,8 +47,7 @@ import it.qbr.testapisudoku.ui.theme.blue_number
 import it.qbr.testapisudoku.ui.theme.blue_p
 import it.qbr.testapisudoku.ui.theme.blue_primary
 import it.qbr.testapisudoku.ui.theme.gray
-import it.qbr.testapisudoku.ui.theme.light_gray
-import it.qbr.testapisudoku.ui.theme.white
+
 
 
 
@@ -203,7 +202,6 @@ fun SudokuCell(
     borderColor: Color,
     notes: Set<Int> = emptySet(),
 ) {
-
     val backgroundColor = when {
         isHighlighted -> background_rows
         isSelected -> background_cell
@@ -217,6 +215,13 @@ fun SudokuCell(
         else -> blue_number
     }
 
+    /*
+    val circularShapeColor = when {
+        isError -> Color.Red.copy(alpha = 0.2f)
+        isSameNumber-> light_primary
+        else -> light_secondary
+    }
+     */
 
     Box(
         contentAlignment = Alignment.Center,
@@ -294,7 +299,10 @@ fun SudokuCell(
 
 
 @Composable
-fun SudokuKeypad(onNumberSelected: (Int) -> Unit) {
+fun SudokuKeypad(
+    onNumberSelected: (Int) -> Unit,
+    disabledNumbers: List<Int>
+) {
     Column(
         Modifier
             .fillMaxWidth()
@@ -307,6 +315,7 @@ fun SudokuKeypad(onNumberSelected: (Int) -> Unit) {
             horizontalArrangement = Arrangement.Center
         ) {
             for (number in 1..5) {
+                val isDisabled = disabledNumbers.contains(number)
                 Box(
                     modifier = Modifier
                         .padding(8.dp)
@@ -334,14 +343,14 @@ fun SudokuKeypad(onNumberSelected: (Int) -> Unit) {
             horizontalArrangement = Arrangement.Center
         ) {
             for (number in 6..9) {
+                val isDisabled = disabledNumbers.contains(number)
                 Box(
                     modifier = Modifier
                         .padding(8.dp)
                         .size(60.dp)
                         .clip(RoundedCornerShape(10.dp))
-                        .border(1.dp, background_same_number)
                         .background(background_same_number)
-                        .clickable { onNumberSelected(number) },
+                        .clickable(enabled = !isDisabled) { onNumberSelected(number) },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -355,5 +364,8 @@ fun SudokuKeypad(onNumberSelected: (Int) -> Unit) {
 
         }
     }
+
 }
+
+
 

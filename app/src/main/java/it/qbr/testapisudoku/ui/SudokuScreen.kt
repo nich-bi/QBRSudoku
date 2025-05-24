@@ -1,6 +1,8 @@
 package it.qbr.testapisudoku.ui
 
 import android.annotation.SuppressLint
+import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -96,6 +98,7 @@ fun SudokuScreen(navController: NavHostController) {
     var errorCells by remember { mutableStateOf<Set<Pair<Int, Int>>>(emptySet()) }
     var selectedNumber by remember { mutableStateOf<Int?>(null) }
     var showWinDialog by remember { mutableStateOf(false) }
+    val completedNumbers = remember { mutableStateListOf<Int>() }
     val isSuggestEnabled = selectedCell?.let { (row, col) -> !fixedCells[row][col] && cells[row][col] != solution[row][col] } == true
     var noteMode by remember { mutableStateOf(false) }
     var cellNotes by remember { mutableStateOf(mutableMapOf<Pair<Int, Int>, MutableSet<Int>>()) }
@@ -103,6 +106,33 @@ fun SudokuScreen(navController: NavHostController) {
     val error = remember { mutableStateOf<String?>(null) }
 
 
+    fun isNumberInAllBlocks(cells: List<List<Int>>, number: Int): Boolean {
+        if (cells.size != 9 || cells.any { it.size != 9 }) return false
+        for (blockRow in 0 until 3) {
+            for (blockCol in 0 until 3) {
+                var found = false
+                for (row in blockRow * 3 until blockRow * 3 + 3) {
+                    for (col in blockCol * 3 until blockCol * 3 + 3) {
+                        if (cells[row][col] == number) {
+                            found = true
+                            break
+                        }
+                    }
+                    if (found) break
+                }
+                if (!found) return false
+            }
+        }
+        return true
+    }
+    LaunchedEffect(cells) {
+        completedNumbers.clear()
+        for (n in 1..9) {
+            val count = cells.sumOf { row -> row.count { it == n } }
+            if (count == 9) completedNumbers.add(n)
+        }
+        Log.d("SudokuDebug", "Completed numbers: $completedNumbers")
+    }
     if (step == 0) {
         // Step selezione difficoltà
 
@@ -198,6 +228,7 @@ fun SudokuScreen(navController: NavHostController) {
                     }.toMutableList()
                     else rowList
                 }
+                Log.d("SudokuDebug", "Updated cells: $cells")
                 if (checkWin()) {
                     showWinDialog = true
                 }
@@ -236,6 +267,7 @@ fun SudokuScreen(navController: NavHostController) {
                                         selectedNumber = if (cells[row][col] != 0) cells[row][col] else null},
                     onSuggestMove = { }
                 )
+
             }
             Box(
                 Modifier
@@ -340,12 +372,15 @@ fun SudokuScreen(navController: NavHostController) {
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
             ) {
-                SudokuKeypad { number ->
-                    selectedNumber = if (number == 0) null else number
-                    selectedCell?.let { (row, col) ->
-                        updateCell(row, col, if (number == 0) 0 else number)
-                    }
-                }
+                SudokuKeypad(
+                    onNumberSelected = { number ->
+                        selectedNumber = if (number == 0) null else number
+                        selectedCell?.let { (row, col) ->
+                            updateCell(row, col, if (number == 0) 0 else number)
+                        }
+                    },
+                    disabledNumbers = completedNumbers
+                )
             }
 
             if (showNoHintsDialog) {
@@ -467,4 +502,21 @@ fun SudokuScreen(navController: NavHostController) {
       }
     }
  }
+
+fun isNumberInAllBlocks(cells: List<List<Int>>, number: Int): Boolean {
+    for (blockRow in 0..2) {
+        for (blockCol in 0..2) {
+            var found = false
+            for (r in 0..2) {
+                for (c in 0..2) {
+                    if (cells[blockRow * 3 + r][blockCol * 3 + c] == number) {
+                        found = true
+                    }
+                }
+            }
+            if (!found) return false
+        }
+    }
+    return true
+}
 
