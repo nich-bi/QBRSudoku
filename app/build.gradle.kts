@@ -41,8 +41,8 @@ android {
 }
 
 dependencies {
+    kapt("androidx.room:room-compiler:2.7.1")
     implementation(libs.androidx.room.runtime)
-    kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.material.icons.extended)
     debugImplementation(libs.ui.tooling)

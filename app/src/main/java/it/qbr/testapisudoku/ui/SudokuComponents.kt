@@ -48,8 +48,6 @@ import it.qbr.testapisudoku.ui.theme.blue_p
 import it.qbr.testapisudoku.ui.theme.blue_primary
 import it.qbr.testapisudoku.ui.theme.gray
 import it.qbr.testapisudoku.ui.theme.light_gray
-import it.qbr.testapisudoku.ui.theme.light_primary
-import it.qbr.testapisudoku.ui.theme.light_secondary
 import it.qbr.testapisudoku.ui.theme.white
 
 
@@ -205,6 +203,7 @@ fun SudokuCell(
     borderColor: Color,
     notes: Set<Int> = emptySet(),
 ) {
+
     val backgroundColor = when {
         isHighlighted -> background_rows
         isSelected -> background_cell
@@ -218,13 +217,6 @@ fun SudokuCell(
         else -> blue_number
     }
 
-    /*
-    val circularShapeColor = when {
-        isError -> Color.Red.copy(alpha = 0.2f)
-        isSameNumber-> light_primary
-        else -> light_secondary
-    }
-     */
 
     Box(
         contentAlignment = Alignment.Center,

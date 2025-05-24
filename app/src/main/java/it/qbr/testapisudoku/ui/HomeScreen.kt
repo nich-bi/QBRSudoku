@@ -11,11 +11,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import it.qbr.testapisudoku.ui.theme.blue_background
 import it.qbr.testapisudoku.ui.theme.blue_primary
 
 @Composable
-fun HomeScreen(onStartGame: () -> Unit,onStorico: () -> Unit) {
+fun HomeScreen(onStartGame: () -> Unit, onStorico: () -> Unit) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -23,8 +22,8 @@ fun HomeScreen(onStartGame: () -> Unit,onStorico: () -> Unit) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = "Sudoku",
-                fontSize = 38.sp,
-                fontWeight = FontWeight.Bold,
+                fontSize = 40.sp,
+                fontWeight = FontWeight.ExtraBold,
             )
             Text(
                 text = "The ultimate game"

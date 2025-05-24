@@ -9,3 +9,4 @@ const val maxErrImpossible = 0
 enum class Difficulty(val maxErrors: Int) {
     EASY(maxErrEasy), MID(maxErrMid), HARD(maxErrHard), IMPOSSIBLE(maxErrImpossible)
 }
+

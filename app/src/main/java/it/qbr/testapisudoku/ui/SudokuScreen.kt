@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.google.gson.Gson
 import it.qbr.testapisudoku.R
 import it.qbr.testapisudoku.db.AppDatabase
 import it.qbr.testapisudoku.db.Game
@@ -347,18 +348,19 @@ fun SudokuScreen(navController: NavHostController) {
                 }
             }
 
-                if (showNoHintsDialog) {
-                    AlertDialog(
-                        onDismissRequest = { showNoHintsDialog = false },
-                        title = { Text("Suggerimenti terminati") },
-                        text = { Text("Hai esaurito i suggerimenti disponibili.") },
-                        confirmButton = {
-                            TextButton(onClick = { showNoHintsDialog = false }) {
-                                Text("OK")
-                            }
+            if (showNoHintsDialog) {
+                AlertDialog(
+                    onDismissRequest = { showNoHintsDialog = false },
+                    title = { Text("Suggerimenti terminati") },
+                    text = { Text("Hai esaurito i suggerimenti disponibili.") },
+                    confirmButton = {
+                        TextButton(onClick = { showNoHintsDialog = false }) {
+                            Text("OK")
                         }
-                    )
-                }
+                    }
+                )
+            }
+
             if (showDialog) {
                 AlertDialog(
                     onDismissRequest = { showDialog = false },
@@ -374,7 +376,10 @@ fun SudokuScreen(navController: NavHostController) {
                                         vinta = false, // o true se vinta
                                         tempo = seconds,
                                         difficolta = selectedDifficulty?.name ?: "",
-                                        errori = errorCount
+                                        errori = errorCount,
+                                        initialBoard = Gson().toJson(board),
+                                        solutionBoard = Gson().toJson(solution),
+                                        finalBard = Gson().toJson(cells)
                                     )
                                 )
                             }
@@ -393,65 +398,71 @@ fun SudokuScreen(navController: NavHostController) {
             }
 
 
-                if (showGameOver) {
-                    AlertDialog(
-                        onDismissRequest = { },
-                        title = { Text("Hai perso!") },
-                        text = { Text("Hai raggiunto il numero massimo di errori.\nVerrà generata una nuova partita.") },
-                        confirmButton = {
-                            TextButton(onClick = {
-                                // Salva la partita persa
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    AppDatabase.getDatabase(context).partitaDao().inserisci(
-                                        Game(
-                                            dataOra = System.currentTimeMillis(),
-                                            vinta = false, // o true se vinta
-                                            tempo = seconds,
-                                            difficolta = selectedDifficulty?.name ?: "",
-                                            errori = errorCount
-                                        )
+            if (showGameOver) {
+                AlertDialog(
+                    onDismissRequest = { },
+                    title = { Text("Hai perso!") },
+                    text = { Text("Hai raggiunto il numero massimo di errori.\nVerrà generata una nuova partita.") },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            // Salva la partita persa
+                            CoroutineScope(Dispatchers.IO).launch {
+                                AppDatabase.getDatabase(context).partitaDao().inserisci(
+                                    Game(
+                                        dataOra = System.currentTimeMillis(),
+                                        vinta = false, // o true se vinta
+                                        tempo = seconds,
+                                        difficolta = selectedDifficulty?.name ?: "",
+                                        errori = errorCount,
+                                        initialBoard = Gson().toJson(board),
+                                        solutionBoard = Gson().toJson(solution),
+                                        finalBard = Gson().toJson(cells)
                                     )
-                                }
-
-                                // Rigenera la partita e torna alla selezione livello
-                                step = 0
-                                showGameOver = false
-                            }) {
-                                Text("OK")
+                                )
                             }
+
+                            // Rigenera la partita e torna alla selezione livello
+                            step = 0
+                            showGameOver = false
+                        }) {
+                            Text("OK")
                         }
-                    )
-                }
-                if (showWinDialog) {
-                    AlertDialog(
-                        onDismissRequest = { },
-                        title = { Text("Hai vinto!") },
-                        text = { Text("Complimenti, hai risolto il Sudoku!") },
-                        confirmButton = {
-                            TextButton(onClick = {
-                                // Salva la partita vinta
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    AppDatabase.getDatabase(context).partitaDao().inserisci(
-                                        Game(
-                                            dataOra = System.currentTimeMillis(),
-                                            vinta = true,
-                                            tempo = seconds,
-                                            difficolta = selectedDifficulty?.name ?: "",
-                                            errori = errorCount
-                                        )
+                    }
+                )
+            }
+
+            if (showWinDialog) {
+                AlertDialog(
+                    onDismissRequest = { },
+                    title = { Text("Hai vinto!") },
+                    text = { Text("Complimenti, hai risolto il Sudoku!") },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            // Salva la partita vinta
+                            CoroutineScope(Dispatchers.IO).launch {
+                                AppDatabase.getDatabase(context).partitaDao().inserisci(
+                                    Game(
+                                        dataOra = System.currentTimeMillis(),
+                                        vinta = true,
+                                        tempo = seconds,
+                                        difficolta = selectedDifficulty?.name ?: "",
+                                        errori = errorCount,
+                                        initialBoard = Gson().toJson(board),
+                                        solutionBoard = Gson().toJson(solution),
+                                        finalBard = Gson().toJson(cells)
                                     )
-                                }
-                                // Torna alla selezione livello
-                                step = 0
-                                showWinDialog = false
-                            }) {
-                                Text("OK")
+                                )
                             }
+                            // Torna alla selezione livello
+                            step = 0
+                            showWinDialog = false
+                        }) {
+                            Text("OK")
                         }
-                    )
-                }
-
-         }
+                    }
+                )
+            }
+            }
         }
       }
     }

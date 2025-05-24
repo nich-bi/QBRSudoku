@@ -15,7 +15,6 @@ fun MainNavHost(navController: NavHostController) {
             )
         }
         composable("sudoku") {
-            // Qui va la tua schermata Sudoku
             SudokuScreen(navController)
         }
         composable("storico") {

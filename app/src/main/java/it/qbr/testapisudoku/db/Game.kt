@@ -10,5 +10,9 @@ data class Game(
     val vinta: Boolean,
     val tempo: Int,
     val difficolta: String,
-    val errori: Int
+    val errori: Int,
+    val initialBoard: String,
+    val solutionBoard: String,
+    val finalBard: String  // tabella quando l'utente finisce la partita (vince, perde, abbandona)
 )
+
