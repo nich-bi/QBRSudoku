@@ -193,8 +193,10 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                             SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault()).format(Date(partita.dataOra)),
                                             style = MaterialTheme.typography.titleMedium
                                         )
+                                        val min = partita.tempo / 60
+                                        val secs = partita.tempo % 60
                                         Text(
-                                            "Tempo: ${partita.tempo} sec  •  Difficoltà: ${partita.difficolta}",
+                                            "Tempo: %02d:%02d".format(min, secs) + "  •  Difficoltà: ${partita.difficolta}",
                                             style = MaterialTheme.typography.bodyMedium
                                         )
                                         Text(
