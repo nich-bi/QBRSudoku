@@ -25,6 +25,7 @@ import com.google.gson.reflect.TypeToken
 import it.qbr.testapisudoku.R
 import it.qbr.testapisudoku.db.AppDatabase
 import it.qbr.testapisudoku.db.Game
+import it.qbr.testapisudoku.ui.theme.blue_primary
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -190,7 +191,7 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                         modifier = Modifier.size(36.dp)
                                     )
 
-                                    Spacer(Modifier.width(20.dp))
+                                    Spacer(Modifier.width(22.dp))
 
                                     Column(
                                         verticalArrangement = Arrangement.Center,
@@ -207,7 +208,7 @@ fun StoricoPartiteScreen(navController: NavHostController) {
 
                                     }
 
-                                    Spacer(Modifier.width(15.dp))
+                                    Spacer(Modifier.width(16.dp))
 
                                     Column (
                                         verticalArrangement = Arrangement.Center,
@@ -224,7 +225,7 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                         )
                                     }
 
-                                    Spacer(Modifier.width(15.dp))
+                                    Spacer(Modifier.width(16.dp))
 
                                     Column (
                                         verticalArrangement = Arrangement.Center,
@@ -239,7 +240,7 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                         )
                                     }
 
-                                    Spacer(Modifier.width(15.dp))
+                                    Spacer(Modifier.width(16.dp))
 
                                     Column (
                                         verticalArrangement = Arrangement.Center,
@@ -249,7 +250,8 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                             fontWeight = FontWeight.Bold
                                         )
                                         Text(
-                                            "${partita.errori}"
+                                            "${partita.errori}",
+                                            style = MaterialTheme.typography.bodyMedium
                                         )
                                     }
 
@@ -291,7 +293,7 @@ fun <T> FiltroTab(options: List<T>, selected: T, onSelect: (T) -> Unit) where T 
     val selectedTabIndex = options.indexOf(selected)
     Surface(
         shape = RoundedCornerShape(12.dp),
-        color = Color(0xFFFFFFFF), // opzionale: stesso colore sfondo card filtro
+        color = Color(0xFFFFFFFF),
         shadowElevation = 2.dp
     ) {
         TabRow(
@@ -301,7 +303,7 @@ fun <T> FiltroTab(options: List<T>, selected: T, onSelect: (T) -> Unit) where T 
             indicator = { tabPositions ->
                 TabRowDefaults.Indicator(
                     Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                    color = Color(0xFF1976D2) // Blu
+                    color = blue_primary
                 )
             }
         ) {
