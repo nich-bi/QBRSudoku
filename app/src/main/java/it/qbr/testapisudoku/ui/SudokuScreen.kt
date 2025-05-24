@@ -231,7 +231,6 @@ fun SudokuScreen(navController: NavHostController) {
                     selectedCell = selectedCell,
                     errorCells = errorCells,
                     selectedNumber = selectedNumber,
-//                    onCellSelected = { row, col -> if (!fixedCells[row][col]) selectedCell = row to col },
                     onCellSelected = { row, col -> selectedCell = row to col
                                         selectedNumber = if (cells[row][col] != 0) cells[row][col] else null},
                     onSuggestMove = { }
@@ -293,7 +292,8 @@ fun SudokuScreen(navController: NavHostController) {
                             if(hintsLeft > 0) {
                                 hintsLeft--
                                 selectedCell?.let { (row, col) ->
-                                    updateCell(row, col, solution[row][col])
+                                    updateCell(row, col, solution[row][col]) // Aggiorna la cella con il valore della soluzione
+                                    selectedNumber = if (cells[row][col] != 0) cells[row][col] else null // Aggiorna il numero selezionato
                                 }
                             } else {
                                 showNoHintsDialog = true
