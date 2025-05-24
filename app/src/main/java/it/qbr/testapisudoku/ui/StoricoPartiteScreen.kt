@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.room.util.TableInfo
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import it.qbr.testapisudoku.R
@@ -179,6 +180,7 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                         .fillMaxWidth(),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
+
                                     Icon(
                                         painter = painterResource(
                                             id = if (partita.vinta) R.drawable.ic_win else R.drawable.ic_lose
@@ -187,30 +189,81 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                         tint = if (partita.vinta) Color(0xFF2E7D32) else Color(0xFFC62828),
                                         modifier = Modifier.size(36.dp)
                                     )
-                                    Spacer(Modifier.width(16.dp))
-                                    Column(Modifier.weight(1f)) {
-                                        Text(
-                                            SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault()).format(Date(partita.dataOra)),
-                                            style = MaterialTheme.typography.titleMedium
+
+                                    Spacer(Modifier.width(20.dp))
+
+                                    Column(
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+
+                                        Text("Data:",
+                                            fontWeight = FontWeight.Bold
                                         )
-                                        val min = partita.tempo / 60
-                                        val secs = partita.tempo % 60
                                         Text(
-                                            "Tempo: %02d:%02d".format(min, secs) + "  •  Difficoltà: ${partita.difficolta}",
+                                            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(partita.dataOra)),
                                             style = MaterialTheme.typography.bodyMedium
                                         )
+
+                                    }
+
+                                    Spacer(Modifier.width(15.dp))
+
+                                    Column (
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ){
+                                        val min = partita.tempo / 60
+                                        val secs = partita.tempo % 60
+                                        Text("Tempo:",
+                                            fontWeight = FontWeight.Bold
+                                        )
                                         Text(
-                                            "Errori: ${partita.errori}",
+                                            "%02d:%02d".format(min, secs),
                                             style = MaterialTheme.typography.bodyMedium
                                         )
                                     }
-                                    Spacer(Modifier.width(8.dp))
+
+                                    Spacer(Modifier.width(15.dp))
+
+                                    Column (
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ){
+                                        Text("Difficoltà:",
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Text(
+                                            partita.difficolta,
+                                            style = MaterialTheme.typography.bodyMedium
+                                        )
+                                    }
+
+                                    Spacer(Modifier.width(15.dp))
+
+                                    Column (
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ){
+                                        Text("Errori:",
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Text(
+                                            "${partita.errori}"
+                                        )
+                                    }
+
+                                    Spacer(Modifier.width(15.dp))
+
+                                    /*
                                     Text(
                                         if (partita.vinta) "Vinta" else "Persa",
                                         color = if (partita.vinta) Color(0xFF2E7D32) else Color(0xFFC62828),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold
                                     )
+                                     */
+
                                 }
                                 if (expanded) {
                                     Divider()

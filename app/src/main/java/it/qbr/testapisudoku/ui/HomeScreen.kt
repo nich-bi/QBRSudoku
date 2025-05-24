@@ -11,6 +11,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import it.qbr.testapisudoku.R
+import it.qbr.testapisudoku.ui.theme.blue_button
 import it.qbr.testapisudoku.ui.theme.blue_primary
 
 @Composable
@@ -41,25 +43,25 @@ fun HomeScreen(onStartGame: () -> Unit, onStorico: () -> Unit) {
 
             Button(
                 onClick = onStartGame,
-                shape = RoundedCornerShape(50.dp),
+                Modifier.padding(8.dp).size(150.dp, 50.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = blue_primary),
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(0.5f)
+                shape = RoundedCornerShape(50.dp),
             ) {
-                Text(text = "Start Game", fontSize = 20.sp)
+                Text(text = "Gioca", fontSize = 22.sp)
             }
 
             Button(
                 onClick = onStorico,
-                shape = RoundedCornerShape(50.dp),
+                Modifier.padding(8.dp).size(150.dp, 50.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = blue_primary),
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(0.5f)
+                shape = RoundedCornerShape(50.dp),
             ) {
-                Text(text = "Storico Partite", fontSize = 20.sp)
+                Spacer(Modifier.width(8.dp))
+                Text("Storico", fontSize = 22.sp)
             }
+
+
+
             Text(
                 text = "by QBR",
                 fontSize = 16.sp,

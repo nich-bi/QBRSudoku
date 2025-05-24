@@ -18,6 +18,7 @@ val background_rows = Color(0xffe2ebf3)
 val background_cell = Color(0xffbbdefb)
 val background_same_number = Color(0xffc3d7ea)
 val blue_number = Color(0xff335aaf)
+val blue_button = Color(0xD05A7BC0)
 
 
 
