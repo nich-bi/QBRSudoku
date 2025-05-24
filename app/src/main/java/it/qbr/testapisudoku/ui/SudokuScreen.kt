@@ -1,6 +1,8 @@
 package it.qbr.testapisudoku.ui
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.foundation.background
@@ -51,6 +53,7 @@ import it.qbr.testapisudoku.model.Difficulty
 import it.qbr.testapisudoku.network.SudokuApi
 import it.qbr.testapisudoku.ui.theme.blue_p
 import it.qbr.testapisudoku.ui.theme.blue_primary
+import it.qbr.testapisudoku.utils.PreferencesConstants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -83,7 +86,7 @@ fun SudokuScreen(navController: NavHostController) {
     var maxErrors by remember { mutableIntStateOf(10) }
     var errorCount by remember { mutableIntStateOf(0) }
     var showGameOver by remember { mutableStateOf(false) }
-    var hintsLeft by remember { mutableIntStateOf(3) }
+    var hintsLeft by remember { mutableIntStateOf(0) }
     var showNoHintsDialog by remember { mutableStateOf(false) }
     var board by remember { mutableStateOf<Board?>(null) }
     var loading by remember { mutableStateOf(true) }
@@ -180,7 +183,6 @@ fun SudokuScreen(navController: NavHostController) {
         fixedCells = initialBoard.cells.map { row -> row.map { it != 0 } }
         solution = solutionBoard.cells
         loading = false
-
     }
     LaunchedEffect(loading) {
         if (!loading) {
@@ -322,8 +324,8 @@ fun SudokuScreen(navController: NavHostController) {
 
                     IconButton(
                         onClick = {
-                            if(hintsLeft > 0) {
-                                hintsLeft--
+                            if(hintsLeft <= PreferencesConstants.MAX_HINT) {
+                                hintsLeft++
                                 selectedCell?.let { (row, col) ->
                                     updateCell(row, col, solution[row][col]) // Aggiorna la cella con il valore della soluzione
                                     selectedNumber = if (cells[row][col] != 0) cells[row][col] else null // Aggiorna il numero selezionato
@@ -349,7 +351,7 @@ fun SudokuScreen(navController: NavHostController) {
                             fontWeight = FontWeight.SemiBold
                         )
 
-                        if (hintsLeft > 0) {
+                        if (hintsLeft <= PreferencesConstants.MAX_HINT) {
                             Box(
                                 modifier = Modifier
                                     .size(16.dp)
@@ -358,13 +360,33 @@ fun SudokuScreen(navController: NavHostController) {
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = hintsLeft.toString(),
+                                    text = (PreferencesConstants.MAX_HINT - hintsLeft).toString(),
                                     color = Color.White,
                                     fontSize = 12.sp
                                 )
                             }
                         }
+
+
                     }
+                    IconButton(onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.wikihow.com/Solve-a-Sudoku"))
+                        context.startActivity(intent)
+                                         },modifier = Modifier.padding(bottom = 250.dp).size(80.dp)) {
+
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_question),
+                            contentDescription = "Come si gioca",
+                            modifier = Modifier.size(40.dp)
+                        )
+                        Text(
+                            text = "Aiuto",
+                            fontSize = 12.sp,
+                            color = Color.Black,
+                            modifier = Modifier.padding(top = 55.dp),
+                            fontWeight = FontWeight.SemiBold)
+                    }
+
                 }
 
             Box(
