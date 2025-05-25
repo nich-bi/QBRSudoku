@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,6 +31,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.BeyondBoundsLayout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -286,24 +288,25 @@ fun SudokuKeypad(
     ) {
         // Prima fila: 1-5
         Row(
-            Modifier.fillMaxWidth(),
+            Modifier
+                .fillMaxWidth().
+                padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             for (number in 1..5) {
                 val isDisabled = disabledNumbers.contains(number)
                 Box(
                     modifier = Modifier
-                        .padding(8.dp)
-                        .size(60.dp)
+                        .weight(1f)
+                        .aspectRatio(1f)
+                        .padding(4.dp)
                         .clip(RoundedCornerShape(10.dp))
-                        // .border(1.dp, gray, RoundedCornerShape(10.dp))
                         .background(if (!isDisabled) background_same_number else light_gray)
                         .clickable(enabled = !isDisabled) { onNumberSelected(number) },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = number.toString(),
-                        style = MaterialTheme.typography.bodyLarge,
                         fontSize = 25.sp,
                         color = if (!isDisabled) blue_p else gray,
                         fontWeight = FontWeight.SemiBold
@@ -312,17 +315,20 @@ fun SudokuKeypad(
             }
         }
         Spacer(modifier = Modifier.height(10.dp))
-        // Seconda fila: 6-9
+        // Seconda fila: 6-9 + un Box vuoto alla fine
         Row(
-            Modifier.fillMaxWidth(),
+            Modifier
+                .fillMaxWidth().
+                padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             for (number in 6..9) {
                 val isDisabled = disabledNumbers.contains(number)
                 Box(
                     modifier = Modifier
-                        .padding(8.dp)
-                        .size(60.dp)
+                        .weight(1f)
+                        .aspectRatio(1f)
+                        .padding(4.dp)
                         .clip(RoundedCornerShape(10.dp))
                         .background(if (!isDisabled) background_same_number else light_gray)
                         .clickable(enabled = !isDisabled) { onNumberSelected(number) },
@@ -336,7 +342,24 @@ fun SudokuKeypad(
                     )
                 }
             }
-
+            // Box necessario per mantenere la dimensione dei box sulle due righe ugiali
+            Box(  // TODO aggiungi azione e cambia colori
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .padding(4.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(gray)
+                    .clickable()  { },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "C",
+                    fontSize = 25.sp,
+                    color = Color.Black,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
         }
     }
 }
