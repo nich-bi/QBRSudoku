@@ -1,6 +1,5 @@
 package it.qbr.testapisudoku.ui
 
-import android.content.SyncStats
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -15,8 +14,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.qbr.testapisudoku.R
-import it.qbr.testapisudoku.ui.theme.blue_button
 import it.qbr.testapisudoku.ui.theme.blue_primary
+
+
+
 
 @Composable
 fun HomeScreen(onStartGame: () -> Unit, onStorico: () -> Unit, onStats: () -> Unit ) {

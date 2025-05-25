@@ -41,6 +41,7 @@ android {
 }
 
 dependencies {
+    // implementation(libs.androidx.constraintlayout.compose)
     kapt("androidx.room:room-compiler:2.7.1")
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

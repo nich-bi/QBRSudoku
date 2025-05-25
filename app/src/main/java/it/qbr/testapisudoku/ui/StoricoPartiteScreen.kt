@@ -1,5 +1,8 @@
 package it.qbr.testapisudoku.ui
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.core.Spring
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -7,10 +10,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -19,7 +22,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.room.util.TableInfo
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import it.qbr.testapisudoku.R
@@ -30,10 +32,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
+
 
 
 enum class FiltroVittoria(val label: String) { TUTTE("Tutte"), VINTE("Vinte"), PERSE("Perse") }
 enum class Ordinamento(val label: String) { CRONO("Data"), TEMPO("Tempo di gioco") }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -162,10 +168,22 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                 ) {
                     items(storicoFiltratoOrdinato) { partita ->
                         val expanded = expandedStates[partita.dataOra] == true
+                        val cardMinHeight = 68.dp
+                        val cardMaxHeight = if (expanded) 360.dp else cardMinHeight
+                        val animatedHeight by animateDpAsState(
+                            targetValue = cardMaxHeight,
+                            animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                stiffness = Spring.StiffnessLow
+                            ),
+                            label = "expandableCardHeight"
+                        )
+
                         Card(
-                            Modifier
+                            modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 12.dp)
+                                .height(animatedHeight)
                                 .clickable {
                                     expandedStates[partita.dataOra] = !(expandedStates[partita.dataOra] ?: false)
                                 },
@@ -174,109 +192,84 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                             ),
                             elevation = CardDefaults.cardElevation(4.dp)
                         ) {
-                            Column {
-                                Row(
-                                    Modifier
+                            // Usa Box per gestire l’overflow del contenuto in caso di compressione
+                            Box(Modifier.fillMaxSize()) {
+                                Column(
+                                    modifier = Modifier
                                         .padding(12.dp)
-                                        .fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically
+                                        .fillMaxSize()
                                 ) {
-
-                                    Icon(
-                                        painter = painterResource(
-                                            id = if (partita.vinta) R.drawable.ic_win else R.drawable.ic_lose
-                                        ),
-                                        contentDescription = null,
-                                        tint = if (partita.vinta) Color(0xFF2E7D32) else Color(0xFFC62828),
-                                        modifier = Modifier.size(36.dp)
-                                    )
-
-                                    Spacer(Modifier.width(22.dp))
-
-                                    Column(
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    Row(
+                                        Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
-
-                                        Text("Data:",
-                                            fontWeight = FontWeight.Bold
+                                        Icon(
+                                            painter = painterResource(
+                                                id = if (partita.vinta) R.drawable.ic_win else R.drawable.ic_lose
+                                            ),
+                                            contentDescription = null,
+                                            tint = if (partita.vinta) Color(0xFF2E7D32) else Color(0xFFC62828),
+                                            modifier = Modifier.size(36.dp)
                                         )
-                                        Text(
-                                            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(partita.dataOra)),
-                                            style = MaterialTheme.typography.bodyMedium
-                                        )
-
+                                        Spacer(Modifier.width(22.dp))
+                                        Column(
+                                            verticalArrangement = Arrangement.Center,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Text("Data:", fontWeight = FontWeight.Bold)
+                                            Text(
+                                                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(partita.dataOra)),
+                                                style = MaterialTheme.typography.bodyMedium
+                                            )
+                                        }
+                                        Spacer(Modifier.width(16.dp))
+                                        Column (
+                                            verticalArrangement = Arrangement.Center,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ){
+                                            val min = partita.tempo / 60
+                                            val secs = partita.tempo % 60
+                                            Text("Tempo:", fontWeight = FontWeight.Bold)
+                                            Text(
+                                                "%02d:%02d".format(min, secs),
+                                                style = MaterialTheme.typography.bodyMedium
+                                            )
+                                        }
+                                        Spacer(Modifier.width(16.dp))
+                                        Column (
+                                            verticalArrangement = Arrangement.Center,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ){
+                                            Text("Difficoltà:", fontWeight = FontWeight.Bold)
+                                            Text(
+                                                partita.difficolta,
+                                                style = MaterialTheme.typography.bodyMedium
+                                            )
+                                        }
+                                        Spacer(Modifier.width(16.dp))
+                                        Column (
+                                            verticalArrangement = Arrangement.Center,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ){
+                                            Text("Errori:", fontWeight = FontWeight.Bold)
+                                            Text(
+                                                "${partita.errori}",
+                                                style = MaterialTheme.typography.bodyMedium
+                                            )
+                                        }
                                     }
-
-                                    Spacer(Modifier.width(16.dp))
-
-                                    Column (
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ){
-                                        val min = partita.tempo / 60
-                                        val secs = partita.tempo % 60
-                                        Text("Tempo:",
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                        Text(
-                                            "%02d:%02d".format(min, secs),
-                                            style = MaterialTheme.typography.bodyMedium
+                                    // Contenuto espanso
+                                    if (expanded) {
+                                        Divider()
+                                        partita.finalBard?.let { boardFinaleJson ->
+                                            SudokuBoardPreview(boardFinaleJson)
+                                        } ?: Text(
+                                            "Nessuna tabella finale salvata.",
+                                            Modifier.padding(12.dp),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = Color.Gray
                                         )
                                     }
-
-                                    Spacer(Modifier.width(16.dp))
-
-                                    Column (
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ){
-                                        Text("Difficoltà:",
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                        Text(
-                                            partita.difficolta,
-                                            style = MaterialTheme.typography.bodyMedium
-                                        )
-                                    }
-
-                                    Spacer(Modifier.width(16.dp))
-
-                                    Column (
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ){
-                                        Text("Errori:",
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                        Text(
-                                            "${partita.errori}",
-                                            style = MaterialTheme.typography.bodyMedium
-                                        )
-                                    }
-
-                                    Spacer(Modifier.width(15.dp))
-
-                                    /*
-                                    Text(
-                                        if (partita.vinta) "Vinta" else "Persa",
-                                        color = if (partita.vinta) Color(0xFF2E7D32) else Color(0xFFC62828),
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                     */
-
-                                }
-                                if (expanded) {
-                                    Divider()
-                                    partita.finalBard?.let { boardFinaleJson ->
-                                        SudokuBoardPreview(boardFinaleJson)
-                                    } ?: Text(
-                                        "Nessuna tabella finale salvata.",
-                                        Modifier.padding(12.dp),
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = Color.Gray
-                                    )
                                 }
                             }
                         }
@@ -287,38 +280,70 @@ fun StoricoPartiteScreen(navController: NavHostController) {
     }
 }
 
-// Composable per tab di filtro/ordinamento
+
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun <T> FiltroTab(options: List<T>, selected: T, onSelect: (T) -> Unit) where T : Enum<T> {
-    val selectedTabIndex = options.indexOf(selected)
-    Surface(
-        shape = RoundedCornerShape(12.dp),
-        color = Color(0xFFFFFFFF),
-        shadowElevation = 2.dp
+fun <T> FiltroTab(
+    options: List<T>,
+    selected: T,
+    onSelect: (T) -> Unit,
+    modifier: Modifier = Modifier
+) where T : Enum<T> {
+    BoxWithConstraints(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(Color.White, shape = RoundedCornerShape(50))
+            .padding(horizontal = 4.dp, vertical = 2.dp)
     ) {
-        TabRow(
-            selectedTabIndex = selectedTabIndex,
-            divider = {},
-            containerColor = Color.Transparent,
-            indicator = { tabPositions ->
-                TabRowDefaults.Indicator(
-                    Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                    color = blue_primary
-                )
-            }
-        ) {
-            options.forEachIndexed { i, opzione ->
-                Tab(
-                    selected = selected == opzione,
-                    onClick = { onSelect(opzione) },
-                    text = {
+        val tabCount = options.size
+        val tabWidth = (maxWidth - (8.dp * (tabCount - 1))) / tabCount
+        val selectedIndex = options.indexOf(selected)
+        val animatedOffset by animateDpAsState(
+            targetValue = (tabWidth + 8.dp) * selectedIndex,
+            label = "FiltroTab Ovale Offset"
+        )
+
+        Box {
+            // Ovale blu animato
+            Box(
+                modifier = Modifier
+                    .offset(x = animatedOffset)
+                    .width(tabWidth)
+                    .height(28.dp)
+                    .clip(RoundedCornerShape(50))
+                    .background(blue_primary.copy(alpha = 0.18f))
+                    .border(
+                        width = 2.dp,
+                        color = blue_primary,
+                        shape = RoundedCornerShape(50)
+                    ),
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                options.forEachIndexed { i, opzione ->
+                    Box(
+                        modifier = Modifier
+                            .width(tabWidth)
+                            .height(28.dp)
+                            .clip(RoundedCornerShape(50))
+                            .clickable { onSelect(opzione) },
+                        contentAlignment = Alignment.Center
+                    ) {
                         Text(
                             opzione.name.replaceFirstChar { it.uppercase() },
                             fontSize = MaterialTheme.typography.bodySmall.fontSize,
-                            color = Color.Black
+                            fontWeight = if (selected == opzione) FontWeight.Bold else FontWeight.Normal,
+                            color = if (selected == opzione) blue_primary else MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(horizontal = 6.dp)
                         )
                     }
-                )
+                    if (i != options.lastIndex) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                }
             }
         }
     }
