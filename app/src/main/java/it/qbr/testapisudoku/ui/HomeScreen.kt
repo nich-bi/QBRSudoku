@@ -61,8 +61,7 @@ fun HomeScreen(onStartGame: () -> Unit, onStorico: () -> Unit, onStats: () -> Un
                 onClick = onStats,
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                 modifier = Modifier
-                    .fillMaxWidth(0.3f)
-                    .height(38.dp)
+                    .wrapContentWidth()
                     .border(
                         width = 2.dp,
                         color = blue_primary,
@@ -78,8 +77,7 @@ fun HomeScreen(onStartGame: () -> Unit, onStorico: () -> Unit, onStats: () -> Un
                 onClick = onStorico,
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                 modifier = Modifier
-                    .fillMaxWidth(0.25f)
-                    .height(38.dp)
+                    .wrapContentWidth()
                     .border(
                         width = 2.dp,
                         color = blue_primary,

@@ -2,7 +2,6 @@ package it.qbr.testapisudoku.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.foundation.background
@@ -58,6 +57,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.core.net.toUri
 
 
 /**
@@ -121,9 +121,10 @@ fun SudokuScreen(navController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            IconButton( onClick = { navController.popBackStack()},
+            IconButton(
+                onClick = { navController.popBackStack() },
 
-            ) {
+                ) {
                 Icon(
                     painter = painterResource(id = R.drawable.back_svgrepo_com),
                     contentDescription = "Torna alla Home",
@@ -214,8 +215,6 @@ fun SudokuScreen(navController: NavHostController) {
             }
         }
     }
-
-
 
     if (loading) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -347,7 +346,8 @@ fun SudokuScreen(navController: NavHostController) {
 
                     }
                     IconButton(onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.wikihow.com/Solve-a-Sudoku"))
+                        val intent = Intent(Intent.ACTION_VIEW,
+                            "https://www.wikihow.com/Solve-a-Sudoku".toUri())
                         context.startActivity(intent)
                                          },modifier = Modifier.padding(bottom = 250.dp).size(80.dp)) {
 

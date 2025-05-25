@@ -34,7 +34,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
-
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.ui.text.style.TextOverflow
 
 
 enum class FiltroVittoria(val label: String) { TUTTE("Tutte"), VINTE("Vinte"), PERSE("Perse") }
@@ -169,12 +170,12 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                     items(storicoFiltratoOrdinato) { partita ->
                         val expanded = expandedStates[partita.dataOra] == true
                         val cardMinHeight = 68.dp
-                        val cardMaxHeight = if (expanded) 360.dp else cardMinHeight
+                        val cardMaxHeight = if (expanded) 365.dp else cardMinHeight
                         val animatedHeight by animateDpAsState(
                             targetValue = cardMaxHeight,
                             animationSpec = spring(
-                                dampingRatio = Spring.DampingRatioMediumBouncy,
-                                stiffness = Spring.StiffnessLow
+                                dampingRatio = Spring.DampingRatioLowBouncy,
+                                stiffness = Spring.StiffnessMedium
                             ),
                             label = "expandableCardHeight"
                         )
@@ -185,14 +186,14 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                 .padding(horizontal = 12.dp)
                                 .height(animatedHeight)
                                 .clickable {
-                                    expandedStates[partita.dataOra] = !(expandedStates[partita.dataOra] ?: false)
+                                    expandedStates[partita.dataOra] = expandedStates[partita.dataOra] != true
                                 },
                             colors = CardDefaults.cardColors(
                                 containerColor = if (partita.vinta) Color(0xFFD0F5E8) else Color(0xFFFFE0E0)
                             ),
                             elevation = CardDefaults.cardElevation(4.dp)
                         ) {
-                            // Usa Box per gestire l’overflow del contenuto in caso di compressione
+                            // Box per gestire l’overflow del contenuto in caso di compressione
                             Box(Modifier.fillMaxSize()) {
                                 Column(
                                     modifier = Modifier
@@ -211,10 +212,11 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                             tint = if (partita.vinta) Color(0xFF2E7D32) else Color(0xFFC62828),
                                             modifier = Modifier.size(36.dp)
                                         )
-                                        Spacer(Modifier.width(22.dp))
+                                        // Se vuoi che anche l'icona abbia peso, usa .weight(1f), altrimenti lasciala senza
                                         Column(
                                             verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            modifier = Modifier.weight(1f)
                                         ) {
                                             Text("Data:", fontWeight = FontWeight.Bold)
                                             Text(
@@ -222,11 +224,11 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                                 style = MaterialTheme.typography.bodyMedium
                                             )
                                         }
-                                        Spacer(Modifier.width(16.dp))
-                                        Column (
+                                        Column(
                                             verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ){
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            modifier = Modifier.weight(1f)
+                                        ) {
                                             val min = partita.tempo / 60
                                             val secs = partita.tempo % 60
                                             Text("Tempo:", fontWeight = FontWeight.Bold)
@@ -235,32 +237,40 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                                 style = MaterialTheme.typography.bodyMedium
                                             )
                                         }
-                                        Spacer(Modifier.width(16.dp))
-                                        Column (
+                                        Column(
                                             verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ){
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            modifier = Modifier.weight(1f)
+                                        ) {
                                             Text("Difficoltà:", fontWeight = FontWeight.Bold)
                                             Text(
                                                 partita.difficolta,
-                                                style = MaterialTheme.typography.bodyMedium
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis
                                             )
                                         }
-                                        Spacer(Modifier.width(16.dp))
-                                        Column (
+                                        Column(
                                             verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ){
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            modifier = Modifier.weight(1f)
+                                        ) {
                                             Text("Errori:", fontWeight = FontWeight.Bold)
                                             Text(
                                                 "${partita.errori}",
-                                                style = MaterialTheme.typography.bodyMedium
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis
                                             )
                                         }
                                     }
                                     // Contenuto espanso
                                     if (expanded) {
-                                        Divider()
+                                        HorizontalDivider(
+                                            modifier = Modifier,
+                                            0.5.dp,
+                                            Color.Gray
+                                        )
                                         partita.finalBard?.let { boardFinaleJson ->
                                             SudokuBoardPreview(boardFinaleJson)
                                         } ?: Text(

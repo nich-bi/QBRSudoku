@@ -339,7 +339,6 @@ fun SudokuKeypad(
 
         }
     }
-
 }
 
 

@@ -12,7 +12,7 @@ val light_gray = Color(0xFFd7d7d7)
 
 
 val blue_p = Color(0xff325aaf)
-val blue_background = Color(0xffeaeef4)
+val blue_background = Color(0xDDCBD1EE)
 val blue_primary = Color(0xff5a7bc0)
 val background_rows = Color(0xffe2ebf3)
 val background_cell = Color(0xffbbdefb)
