@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -32,6 +33,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.BeyondBoundsLayout
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -124,16 +126,15 @@ fun SudokuBoard(
     errorCells:Set<Pair<Int, Int>>,
     selectedNumber: Int?,
     onSuggestMove: ()-> Unit,
-    onCellSelected: (Int, Int) -> Unit
+    onCellSelected: (Int, Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = Modifier
-           .padding(top = 50.dp, start = 12.dp, end = 12.dp, bottom = 12.dp)
+        modifier = modifier
 
     ) {
         Column(
-            Modifier
-                .padding(10.dp)
+
         ) {
             for ((rowIdx, row) in grid.withIndex()) {
                 Row {
@@ -278,7 +279,8 @@ fun SudokuCell(
 @Composable
 fun SudokuKeypad(
     onNumberSelected: (Int) -> Unit,
-    disabledNumbers: List<Int>
+    disabledNumbers: List<Int>,
+    modifier: Modifier
 ) {
     Column(
         Modifier
@@ -357,6 +359,133 @@ fun SudokuKeypad(
                     text = "C",
                     fontSize = 25.sp,
                     color = Color.Black,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+fun SudokuIconBar(
+    noteMode: Boolean,
+    onNoteModeToggle: () -> Unit,
+    onErase: () -> Unit,
+    onSuggest: () -> Unit,
+    isSuggestEnabled: Boolean,
+    hintsLeft: Int,
+    maxHints: Int,
+    showNoHintsDialog: () -> Unit,
+    blue_p: Color,
+    onHelp: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+
+    Box(
+        modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp)
+    ) {
+        Row(Modifier.align(Alignment.BottomCenter)) {
+            // Note Button
+            IconButton(
+                onClick = onNoteModeToggle,
+                modifier = Modifier.padding(bottom = 250.dp).size(80.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.notes_svgrepo_com),
+                    contentDescription = "Modalità note",
+                    tint = if (noteMode) Color.Blue else Color.Black,
+                    modifier = Modifier.size(40.dp)
+                )
+                Text(
+                    text = "Note",
+                    fontSize = 12.sp,
+                    color = Color.Black,
+                    modifier = Modifier.padding(top = 55.dp),
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            // Erase Button
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                IconButton(
+                    onClick = onErase,
+                    modifier = Modifier.padding(bottom = 250.dp).size(80.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_eraser_24),
+                        contentDescription = "Cancella cella",
+                        modifier = Modifier.size(40.dp)
+                    )
+                    Text(
+                        text = "Cancella",
+                        fontSize = 12.sp,
+                        color = Color.Black,
+                        modifier = Modifier.padding(top = 55.dp),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+
+            // Suggest Button
+            IconButton(
+                onClick = {
+                    if (hintsLeft <= maxHints) {
+                        onSuggest()
+                    } else {
+                        showNoHintsDialog()
+                    }
+                },
+                enabled = isSuggestEnabled,
+                modifier = Modifier.padding(bottom = 250.dp).size(80.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_lightbulb_stars_24),
+                    contentDescription = "Suggerimento",
+                    modifier = Modifier.size(40.dp)
+                )
+                Text(
+                    text = "Sugg",
+                    fontSize = 12.sp,
+                    color = Color.Black,
+                    modifier = Modifier.padding(top = 55.dp),
+                    fontWeight = FontWeight.SemiBold
+                )
+                if (hintsLeft <= maxHints) {
+                    Box(
+                        modifier = Modifier
+                            .size(16.dp)
+                            .offset(x = 8.dp, y = 12.dp)
+                            .background(blue_p, shape = CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = (maxHints - hintsLeft).toString(),
+                            color = Color.White,
+                            fontSize = 12.sp
+                        )
+                    }
+                }
+            }
+
+            // Help Button
+            IconButton(
+                onClick = onHelp,
+                modifier = Modifier.padding(bottom = 250.dp).size(80.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_question),
+                    contentDescription = "Come si gioca",
+                    modifier = Modifier.size(40.dp)
+                )
+                Text(
+                    text = "Aiuto",
+                    fontSize = 12.sp,
+                    color = Color.Black,
+                    modifier = Modifier.padding(top = 55.dp),
                     fontWeight = FontWeight.SemiBold
                 )
             }

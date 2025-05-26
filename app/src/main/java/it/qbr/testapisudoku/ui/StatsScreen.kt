@@ -129,6 +129,8 @@ fun StatsScreen(
     }
 }
 
+
+
 @Composable
 fun StatsSection(
     icon: Int,
@@ -185,6 +187,7 @@ fun StatsRow(
         )
     }
 }
+
 
 fun formatTime(seconds: Int): String {
     val min = TimeUnit.SECONDS.toMinutes(seconds.toLong())

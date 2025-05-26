@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.implementation
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -41,7 +43,7 @@ android {
 }
 
 dependencies {
-    // implementation(libs.androidx.constraintlayout.compose)
+    implementation(libs.androidx.constraintlayout.compose)
     kapt("androidx.room:room-compiler:2.7.1")
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
