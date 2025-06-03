@@ -15,23 +15,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.core.net.toUri
 import androidx.navigation.NavHostController
-import com.google.gson.Gson
-import it.qbr.testapisudoku.R
+import it.qbr.testapisudoku.model.Difficulty
 import it.qbr.testapisudoku.db.AppDatabase
 import it.qbr.testapisudoku.db.Game
 import it.qbr.testapisudoku.model.Board
-import it.qbr.testapisudoku.model.Difficulty
 import it.qbr.testapisudoku.network.SudokuApi
 import it.qbr.testapisudoku.ui.theme.blue_p
-import it.qbr.testapisudoku.ui.theme.blue_primary
 import it.qbr.testapisudoku.utils.PreferencesConstants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import androidx.core.net.toUri
+import com.google.gson.Gson
+import it.qbr.testapisudoku.R
+import it.qbr.testapisudoku.ui.theme.blue_primary
 
 
 @SuppressLint("MutableCollectionMutableState", "UnusedBoxWithConstraintsScope", "ConfigurationScreenWidthHeight")
@@ -57,9 +57,14 @@ fun SudokuScreen(navController: NavHostController) {
     var selectedNumber by remember { mutableStateOf<Int?>(null) }
     var showWinDialog by remember { mutableStateOf(false) }
     val completedNumbers = remember { mutableStateListOf<Int>() }
-    val isSuggestEnabled = selectedCell?.let { (row, col) -> !fixedCells.getOrNull(row)?.getOrNull(col).orFalse() && cells.getOrNull(row)?.getOrNull(col) != solution.getOrNull(row)?.getOrNull(col) } == true
+    val isSuggestEnabled =
+        selectedCell?.let { (row, col) -> !fixedCells.getOrNull(row)?.getOrNull(col).orFalse() && cells.getOrNull(row)?.getOrNull(col) != solution.getOrNull(row)?.getOrNull(col) } == true
     var noteMode by remember { mutableStateOf(false) }
     var cellNotes by remember { mutableStateOf(mutableMapOf<Pair<Int, Int>, MutableSet<Int>>()) }
+
+    // Stato per abbandono partita
+    var showAbandonConfirm by remember { mutableStateOf(false) }
+    var showSolution by remember { mutableStateOf(false) }
 
     LaunchedEffect(cells) {
         completedNumbers.clear()
@@ -167,12 +172,10 @@ fun SudokuScreen(navController: NavHostController) {
             val configuration = LocalConfiguration.current
             val screenWidth = configuration.screenWidthDp.dp
             val screenHeight = configuration.screenHeightDp.dp
-            // Stima delle altezze delle barre (personalizza se necessario)
             val topBarHeight = 56.dp
             val iconBarHeight = 56.dp
             val keypadHeight = 72.dp
             val verticalPadding = 16.dp * 2
-            // Calcola la dimensione massima della board
             val maxBoardHeight = screenHeight - topBarHeight - iconBarHeight - keypadHeight - verticalPadding
             val boardSize = androidx.compose.ui.unit.min(screenWidth, maxBoardHeight).coerceAtLeast(0.dp)
 
@@ -211,7 +214,7 @@ fun SudokuScreen(navController: NavHostController) {
                         contentAlignment = Alignment.Center
                     ) {
                         SudokuBoard(
-                            grid = cells,
+                            grid = if (showSolution) solution else cells,
                             fixedCells = fixedCells,
                             selectedCell = selectedCell,
                             errorCells = errorCells,
@@ -276,7 +279,8 @@ fun SudokuScreen(navController: NavHostController) {
                                 bottom.linkTo(parent.bottom)
                             }
                             .height(keypadHeight)
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
+                        onAbbandona = { showAbandonConfirm = true }
                     )
                 }
             }
@@ -325,6 +329,28 @@ fun SudokuScreen(navController: NavHostController) {
                 },
                 dismissButton = {
                     TextButton(onClick = { showDialog = false }) {
+                        Text("Annulla")
+                    }
+                }
+            )
+        }
+
+        // Conferma abbandono partita
+        if (showAbandonConfirm) {
+            AlertDialog(
+                onDismissRequest = { showAbandonConfirm = false },
+                title = { Text("Abbandona partita") },
+                text = { Text("Sei sicuro di voler abbandonare la partita? Verrà mostrata la soluzione.") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        showSolution = true
+                        showAbandonConfirm = false
+                    }) {
+                        Text("Sì, mostra soluzione")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showAbandonConfirm = false }) {
                         Text("Annulla")
                     }
                 }
@@ -393,5 +419,4 @@ fun SudokuScreen(navController: NavHostController) {
     }
 }
 
-// Helper extension for null safety
 private fun Boolean?.orFalse() = this == true

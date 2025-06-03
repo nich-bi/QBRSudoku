@@ -1,16 +1,26 @@
 package it.qbr.testapisudoku.ui
 
 import android.R.attr.enabled
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.with
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -19,6 +29,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,12 +64,21 @@ import it.qbr.testapisudoku.ui.theme.blue_p
 import it.qbr.testapisudoku.ui.theme.blue_primary
 import it.qbr.testapisudoku.ui.theme.gray
 import it.qbr.testapisudoku.ui.theme.light_gray
+import it.qbr.testapisudoku.ui.theme.quit_background
 
 
 @Composable
-fun SudokuTopBar(maxErr: Int, seconds: Int, errorCount: Int,onHomeClick: () -> Unit) {
+fun SudokuTopBar(
+    maxErr: Int,
+    seconds: Int,
+    errorCount: Int,
+    onHomeClick: () -> Unit
+) {
     val minutes = seconds / 60
     val secs = seconds % 60
+    val timeString = "%02d%02d".format(minutes, secs)
+    val errorCountString = errorCount.toString().padStart(2, '0')
+    val maxErrString = maxErr.toString().padStart(2, '0')
 
     Row(
         Modifier
@@ -65,8 +86,7 @@ fun SudokuTopBar(maxErr: Int, seconds: Int, errorCount: Int,onHomeClick: () -> U
             .padding(horizontal = 24.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
-    )
-    {
+    ) {
         IconButton(onClick = onHomeClick) {
             Icon(
                 painter = painterResource(id = R.drawable.back_svgrepo_com),
@@ -78,44 +98,91 @@ fun SudokuTopBar(maxErr: Int, seconds: Int, errorCount: Int,onHomeClick: () -> U
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    // mm:ss formato -> timeString[0], timeString[1], ':', timeString[2], timeString[3]
+                    for (i in 0..3) {
+                        AnimatedDigit(
+                            digit = timeString[i],
+                            key = "timer$i"
+                        )
+                        if (i == 1) {
+                            Text(
+                                text = ":",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = FontFamily(Font(R.font.segoeuithis)),
+                                color = Color.Black
+                            )
+                        }
+                    }
+                }
                 Text(
                     text = "Tempo",
-                    fontSize = 18.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily(Font(R.font.segoeuithis)),
-                    color = gray
-                )
-
-                Text(
-                    text = "%02d:%02d".format(minutes, secs),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily(Font(R.font.segoeuithis)),
-                    color = gray
+                    color = Color.Black
                 )
             }
         }
-
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                // Animazione cifra-per-cifra per gli errori
+                for (i in errorCountString.indices) {
+                    AnimatedDigit(
+                        digit = errorCountString[i],
+                        key = "err$i"
+                    )
+                }
+                Text(
+                    text = "/",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Black,
+                    fontFamily = FontFamily(Font(R.font.segoeuithis)),
+                    color = Color.Black,
+                )
+                for (i in maxErrString.indices) {
+                    AnimatedDigit(
+                        digit = maxErrString[i],
+                        key = "maxerr$i"
+                    )
+                }
+            }
+
             Text(
                 text = "Errori",
-                fontSize = 18.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Black,
                 fontFamily = FontFamily(Font(R.font.segoeuithis)),
-                color = gray,
-            )
-
-            Text(
-                text = "$errorCount / $maxErr",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Black,
-                fontFamily = FontFamily(Font(R.font.segoeuithis)),
-                color = gray,
+                color = Color.Black,
             )
         }
-
     }
 }
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+fun AnimatedDigit(digit: Char, key: String) {
+    AnimatedContent(
+        targetState = digit,
+        transitionSpec = {
+            slideInVertically { height -> height } + fadeIn() with
+                    slideOutVertically { height -> -height } + fadeOut()
+        },
+        label = key
+    ) { targetDigit ->
+        Text(
+            text = targetDigit.toString(),
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily(Font(R.font.segoeuithis)),
+            color = Color.Black,
+        )
+    }
+}
+
 
 
 @Composable
@@ -123,22 +190,27 @@ fun SudokuBoard(
     grid: List<List<Int>>,
     fixedCells: List<List<Boolean>>,
     selectedCell: Pair<Int, Int>?,
-    errorCells:Set<Pair<Int, Int>>,
+    errorCells: Set<Pair<Int, Int>>,
     selectedNumber: Int?,
-    onSuggestMove: ()-> Unit,
+    onSuggestMove: () -> Unit,
     onCellSelected: (Int, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = modifier
+    BoxWithConstraints(modifier = modifier) {
+        // Calcola la dimensione massima per la cella in base allo spazio disponibile
+        val cellSize = (maxWidth / 9).coerceAtMost(maxHeight / 9)
 
-    ) {
         Column(
-
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             for ((rowIdx, row) in grid.withIndex()) {
-                Row {
-                   for ((colIdx, cell) in row.withIndex()) {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    for ((colIdx, cell) in row.withIndex()) {
                         val thickTop = if (rowIdx == 0) 3.dp else if (rowIdx % 3 == 0) 2.dp else 0.5.dp
                         val thickLeft = if (colIdx == 0) 3.dp else if (colIdx % 3 == 0) 2.dp else 0.5.dp
                         val thickRight = if (colIdx == 8) 3.dp else if ((colIdx + 1) % 3 == 0) 2.dp else 0.5.dp
@@ -146,14 +218,14 @@ fun SudokuBoard(
 
                         val isHighlighted = selectedCell?.let { (selRow, selCol) ->
                             rowIdx == selRow ||
-                            colIdx == selCol ||
-                            (rowIdx / 3 == selRow / 3 && colIdx / 3 == selCol / 3)
+                                    colIdx == selCol ||
+                                    (rowIdx / 3 == selRow / 3 && colIdx / 3 == selCol / 3)
                         } == true
 
                         SudokuCell(
                             value = cell,
                             isSelected = selectedCell == Pair(rowIdx, colIdx),
-                            isFixed = fixedCells[rowIdx][colIdx],
+                            isFixed = fixedCells.getOrNull(rowIdx)?.getOrNull(colIdx) ?: false,
                             isError = errorCells.contains(Pair(rowIdx, colIdx)),
                             isHighlighted = isHighlighted && selectedCell != Pair(rowIdx, colIdx),
                             isSameNumber = selectedNumber != null && cell == selectedNumber && cell != 0,
@@ -162,14 +234,16 @@ fun SudokuBoard(
                             borderLeft = thickLeft,
                             borderRight = thickRight,
                             borderBottom = thickBottom,
-                            borderColor = Color.Black
+                            borderColor = Color.Black,
+                            cellSize = cellSize
                         )
-                   }
+                    }
                 }
             }
         }
     }
 }
+
 
 
 @Composable
@@ -187,11 +261,12 @@ fun SudokuCell(
     isSameNumber: Boolean,
     borderColor: Color,
     notes: Set<Int> = emptySet(),
+    cellSize: Dp
 ) {
     val backgroundColor = when {
         isHighlighted -> background_rows
         isSelected -> background_cell
-        isSameNumber-> background_same_number
+        isSameNumber -> background_same_number
         else -> Color.White
     }
 
@@ -204,9 +279,8 @@ fun SudokuCell(
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .size(40.dp)
+            .size(cellSize)
             .background(backgroundColor)
-
             .drawBehind {
                 // Bordo superiore
                 drawLine(
@@ -237,34 +311,30 @@ fun SudokuCell(
                     strokeWidth = borderBottom.toPx()
                 )
             }
-            .clickable{ onClick() } // cliccabile anche numeri fissi
-
+            .clickable { onClick() }
     ) {
         if (value != 0) {
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(32.dp)
-                    // .background(circularShapeColor, shape = CircleShape)
+                modifier = Modifier.size(cellSize * 0.8f)
             ) {
                 Text(
                     text = value.toString(),
-                    // style = MaterialTheme.typography.,
-                    fontSize = 27.sp,
+                    fontSize = (cellSize.value * 0.6).sp,
                     color = numberColor,
                     fontWeight = FontWeight.Normal
                 )
             }
-        }else if (notes.isNotEmpty()) {
+        } else if (notes.isNotEmpty()) {
             // Mostra le note in piccolo, ad esempio in una griglia 3x3
             Column {
                 for (i in 1..9 step 3) {
                     Row {
-                        for (j in i..i+2) {
+                        for (j in i..i + 2) {
                             Text(
                                 text = if (notes.contains(j)) j.toString() else "",
-                                fontSize = 10.sp,
-                                modifier = Modifier.width(10.dp)
+                                fontSize = (cellSize.value * 0.2).sp,
+                                modifier = Modifier.width(cellSize / 3)
                             )
                         }
                     }
@@ -280,12 +350,12 @@ fun SudokuCell(
 fun SudokuKeypad(
     onNumberSelected: (Int) -> Unit,
     disabledNumbers: List<Int>,
-    modifier: Modifier
+    modifier: Modifier,
+    onAbbandona: (() -> Unit)? = null
 ) {
     Column(
         Modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp, bottom = 60.dp),
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Prima fila: 1-5
@@ -344,22 +414,24 @@ fun SudokuKeypad(
                     )
                 }
             }
-            // Box necessario per mantenere la dimensione dei box sulle due righe ugiali
-            Box(  // TODO aggiungi azione e cambia colori
+
+            Box(
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1f)
                     .padding(4.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(gray)
-                    .clickable()  { },
+                    .background(quit_background)
+                    .clickable()  {
+                        onAbbandona?.invoke()
+                        },
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "C",
-                    fontSize = 25.sp,
-                    color = Color.Black,
-                    fontWeight = FontWeight.SemiBold
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Abbandona",
+                    tint = Color(0xFFB71C1C),
+                    modifier = Modifier.size(32.dp)
                 )
             }
         }
@@ -392,7 +464,7 @@ fun SudokuIconBar(
             // Note Button
             IconButton(
                 onClick = onNoteModeToggle,
-                modifier = Modifier.padding(bottom = 250.dp).size(80.dp)
+                modifier = Modifier.padding(bottom = 50.dp).size(80.dp)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.notes_svgrepo_com),
@@ -413,7 +485,7 @@ fun SudokuIconBar(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 IconButton(
                     onClick = onErase,
-                    modifier = Modifier.padding(bottom = 250.dp).size(80.dp)
+                    modifier = Modifier.padding(bottom = 50.dp).size(80.dp)
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_eraser_24),
@@ -440,7 +512,7 @@ fun SudokuIconBar(
                     }
                 },
                 enabled = isSuggestEnabled,
-                modifier = Modifier.padding(bottom = 250.dp).size(80.dp)
+                modifier = Modifier.padding(bottom = 50.dp).size(80.dp)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_lightbulb_stars_24),
@@ -474,7 +546,7 @@ fun SudokuIconBar(
             // Help Button
             IconButton(
                 onClick = onHelp,
-                modifier = Modifier.padding(bottom = 250.dp).size(80.dp)
+                modifier = Modifier.padding(bottom = 50.dp).size(80.dp)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_question),

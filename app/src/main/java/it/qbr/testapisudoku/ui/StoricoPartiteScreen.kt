@@ -2,6 +2,8 @@ package it.qbr.testapisudoku.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -9,7 +11,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
@@ -32,15 +39,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.ui.text.style.TextOverflow
-
 
 enum class FiltroVittoria(val label: String) { TUTTE("Tutte"), VINTE("Vinte"), PERSE("Perse") }
 enum class Ordinamento(val label: String) { CRONO("Data"), TEMPO("Tempo di gioco") }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -131,26 +132,18 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                         )
                     }
                     Spacer(Modifier.height(6.dp))
+
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("Ordina per:", modifier = Modifier.padding(end = 8.dp))
                         // Ordinamento
                         FiltroTab(
                             options = Ordinamento.entries,
                             selected = ordinamento,
-                            onSelect = { ordinamento = it }
+                            onSelect = { ordinamento = it },
+                            showArrows = true,
+                            ordineDecrescente = ordineDecrescente,
+                            onInvertiOrdine = { ordineDecrescente = !ordineDecrescente }
                         )
-                        // Ordine crescente/decrescente
-                        IconButton(
-                            onClick = { ordineDecrescente = !ordineDecrescente }
-                        ) {
-                            Icon(
-                                painter = painterResource(
-                                    id = if (ordineDecrescente) R.drawable.ic_arrow_down else R.drawable.ic_arrow_up
-                                ),
-                                contentDescription = "Inverti ordine",
-                                modifier = Modifier.size(28.dp)
-                            )
-                        }
                     }
                 }
             }
@@ -212,7 +205,6 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                             tint = if (partita.vinta) Color(0xFF2E7D32) else Color(0xFFC62828),
                                             modifier = Modifier.size(36.dp)
                                         )
-                                        // Se vuoi che anche l'icona abbia peso, usa .weight(1f), altrimenti lasciala senza
                                         Column(
                                             verticalArrangement = Arrangement.Center,
                                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -297,8 +289,13 @@ fun <T> FiltroTab(
     options: List<T>,
     selected: T,
     onSelect: (T) -> Unit,
+    showArrows: Boolean = false,
+    ordineDecrescente: Boolean = true,
+    onInvertiOrdine: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) where T : Enum<T> {
+    val tabHeight = 36.dp // aumenta l'altezza per avere spazio anche per la freccia
+    val arrowWidth = if (showArrows) tabHeight else 0.dp // la freccia è un quadrato come i tab
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
@@ -306,7 +303,7 @@ fun <T> FiltroTab(
             .padding(horizontal = 4.dp, vertical = 2.dp)
     ) {
         val tabCount = options.size
-        val tabWidth = (maxWidth - (8.dp * (tabCount - 1))) / tabCount
+        val tabWidth = (maxWidth - (8.dp * (tabCount - 1)) - arrowWidth) / tabCount
         val selectedIndex = options.indexOf(selected)
         val animatedOffset by animateDpAsState(
             targetValue = (tabWidth + 8.dp) * selectedIndex,
@@ -314,14 +311,13 @@ fun <T> FiltroTab(
         )
 
         Box {
-            // Ovale blu animato
             Box(
                 modifier = Modifier
-                    .offset(x = animatedOffset)
+                    .offset(x = animatedOffset, y = 0.dp)
                     .width(tabWidth)
-                    .height(28.dp)
+                    .height(tabHeight)
                     .clip(RoundedCornerShape(50))
-                    .background(blue_primary.copy(alpha = 0.18f))
+                    .background(Color(0xFFCCE6FF))
                     .border(
                         width = 2.dp,
                         color = blue_primary,
@@ -329,21 +325,24 @@ fun <T> FiltroTab(
                     ),
             )
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(tabHeight), // allinea tutto verticalmente
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 options.forEachIndexed { i, opzione ->
                     Box(
                         modifier = Modifier
                             .width(tabWidth)
-                            .height(28.dp)
+                            .height(tabHeight)
                             .clip(RoundedCornerShape(50))
                             .clickable { onSelect(opzione) },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            opzione.name.replaceFirstChar { it.uppercase() },
+                            if (opzione is FiltroVittoria) opzione.label
+                            else if (opzione is Ordinamento) opzione.label
+                            else opzione.name.replaceFirstChar { it.uppercase() },
                             fontSize = MaterialTheme.typography.bodySmall.fontSize,
                             fontWeight = if (selected == opzione) FontWeight.Bold else FontWeight.Normal,
                             color = if (selected == opzione) blue_primary else MaterialTheme.colorScheme.onSurface,
@@ -354,11 +353,26 @@ fun <T> FiltroTab(
                         Spacer(modifier = Modifier.width(8.dp))
                     }
                 }
+                if (showArrows && onInvertiOrdine != null) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    IconButton(
+                        onClick = onInvertiOrdine,
+                        modifier = Modifier
+                            .size(tabHeight)
+                            .padding(end = 2.dp)
+                    ) {
+                        Icon(
+                            imageVector = if (ordineDecrescente) Icons.Filled.ArrowDropDown else Icons.Filled.ArrowDropUp,
+                            contentDescription = "Inverti ordine",
+                            tint = Color.Black,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                }
             }
         }
     }
 }
-
 
 @Composable
 fun SudokuBoardPreview(boardJson: String) {

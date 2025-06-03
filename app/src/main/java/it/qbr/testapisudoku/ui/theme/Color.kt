@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 
 
-val error = Color(0xFFBA1A1A)
+val quit_background = Color(0xDDFD7474)
 val white = Color(0xFFFFFFFF)
 val gray = Color(0xFF595959)
 val light_gray = Color(0xFFd7d7d7)
