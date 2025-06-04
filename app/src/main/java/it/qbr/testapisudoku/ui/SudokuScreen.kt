@@ -1,6 +1,5 @@
 package it.qbr.testapisudoku.ui
 
-import android.R.attr.text
 import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.compose.foundation.layout.*
@@ -10,13 +9,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import it.qbr.testapisudoku.model.Difficulty
@@ -67,6 +64,10 @@ fun SudokuScreen(navController: NavHostController) {
     // Stato per abbandono partita
     var showAbandonConfirm by remember { mutableStateOf(false) }
     var showSolution by remember { mutableStateOf(false) }
+
+    var showResultScreen by remember { mutableStateOf(false) }
+    var resultIsWin by remember { mutableStateOf(false) }
+    var finalTime by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(cells) {
         completedNumbers.clear()
@@ -264,6 +265,8 @@ fun SudokuScreen(navController: NavHostController) {
         }
 
         // ---- DIALOGS ----
+
+        // Messaggio suggerimenti terminati
         if (showNoHintsDialog) {
             AlertDialog(
                 onDismissRequest = { showNoHintsDialog = false },
@@ -277,11 +280,13 @@ fun SudokuScreen(navController: NavHostController) {
             )
         }
 
+        // Abbandona partita (impl: riprendi partita)
         if (showDialog) {
             AlertDialog(
                 onDismissRequest = { showDialog = false },
                 title = { Text("Sei sicuro?") },
                 text = { Text("Tornando alla home perderai la partita in corso.") },
+
                 confirmButton = {
                     TextButton(onClick = {
                         CoroutineScope(Dispatchers.IO).launch {
@@ -312,87 +317,109 @@ fun SudokuScreen(navController: NavHostController) {
             )
         }
 
-        // Conferma abbandono partita
+
+
+        // Messaggio conferma abbandona
         if (showAbandonConfirm) {
             AlertDialog(
-                onDismissRequest = { showAbandonConfirm = false },
+                onDismissRequest = {  },
                 title = { Text(stringResource(R.string.abb_part)) },
                 text = { Text(stringResource(R.string.conf_abb_part)) },
+
                 confirmButton = {
                     TextButton(onClick = {
-                        showSolution = true
-                        showAbandonConfirm = false
-                    }) {
-                        Text(stringResource(R.string.tasto_conf_abb))
+                        showGameOver = true
+                        showAbandonConfirm = false }
+                    ) {
+                        Text("OK")
                     }
                 },
+
                 dismissButton = {
-                    TextButton(onClick = { showAbandonConfirm = false }) {
+                    TextButton(onClick = {
+                        showGameOver = false
+                        showAbandonConfirm = false }
+                    ) {
                         Text(stringResource(R.string.tasto_ann_abb))
                     }
                 }
             )
         }
 
+
+        // Partita persa
         if (showGameOver) {
-            AlertDialog(
-                onDismissRequest = { },
-                title = { Text(stringResource(R.string.game_over)) },
-                text = { Text(stringResource(R.string.mess_max_err)) },
-                confirmButton = {
-                    TextButton(onClick = {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            AppDatabase.getDatabase(context).partitaDao().inserisci(
-                                Game(
-                                    dataOra = System.currentTimeMillis(),
-                                    vinta = false,
-                                    tempo = seconds,
-                                    difficolta = selectedDifficulty?.name ?: "",
-                                    errori = errorCount,
-                                    initialBoard = Gson().toJson(board),
-                                    solutionBoard = Gson().toJson(solution),
-                                    finalBard = Gson().toJson(cells)
-                                )
+
+
+            LaunchedEffect(showGameOver) {
+                if (showGameOver) {
+
+                    finalTime = seconds
+                    CoroutineScope(Dispatchers.IO).launch {
+                        AppDatabase.getDatabase(context).partitaDao().inserisci(
+                            Game(
+                                dataOra = System.currentTimeMillis(),
+                                vinta = false,
+                                tempo = seconds,
+                                difficolta = selectedDifficulty?.name ?: "",
+                                errori = errorCount,
+                                initialBoard = Gson().toJson(board),
+                                solutionBoard = Gson().toJson(solution),
+                                finalBard = Gson().toJson(cells)
                             )
-                        }
-                        step = 0
-                        showGameOver = false
-                    }) {
-                        Text("OK")
+                        )
                     }
+                    resultIsWin = false
+                    showResultScreen = true
+                    showGameOver = false
+                }
+            }
+        }
+
+        // Messaggio partita vinta
+        if (showWinDialog) {
+            // Salva la partita vinta una sola volta e mostra la schermata risultato
+            LaunchedEffect(showWinDialog) {
+                if (showWinDialog) {
+                    finalTime = seconds
+                    CoroutineScope(Dispatchers.IO).launch {
+                        AppDatabase.getDatabase(context).partitaDao().inserisci(
+                            Game(
+                                dataOra = System.currentTimeMillis(),
+                                vinta = true,
+                                tempo = seconds,
+                                difficolta = selectedDifficulty?.name ?: "",
+                                errori = errorCount,
+                                initialBoard = Gson().toJson(board),
+                                solutionBoard = Gson().toJson(solution),
+                                finalBard = Gson().toJson(cells)
+                            )
+                        )
+                    }
+                    resultIsWin = true
+                    showResultScreen = true
+                    showWinDialog = false
+                }
+            }
+        }
+
+
+        if (showResultScreen) {
+            GameResultScreen(
+                isWin = resultIsWin,
+                grid = cells,
+                fixedCells = fixedCells,
+                solution = solution,
+                errorCount = errorCount,
+                seconds = finalTime,
+                onHomeClick = {
+                    showResultScreen = false
+                    navController.popBackStack()
                 }
             )
         }
 
-        if (showWinDialog) {
-            AlertDialog(
-                onDismissRequest = { },
-                title = { Text(stringResource(R.string.vittoria)) },
-                text = { Text(stringResource(R.string.mess_vittoria)) },
-                confirmButton = {
-                    TextButton(onClick = {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            AppDatabase.getDatabase(context).partitaDao().inserisci(
-                                Game(
-                                    dataOra = System.currentTimeMillis(),
-                                    vinta = true,
-                                    tempo = seconds,
-                                    difficolta = selectedDifficulty?.name ?: "",
-                                    errori = errorCount,
-                                    initialBoard = Gson().toJson(board),
-                                    solutionBoard = Gson().toJson(solution),
-                                    finalBard = Gson().toJson(cells)
-                                )
-                            )
-                        }
-                        step = 0
-                        showWinDialog = false
-                    }) {
-                        Text("OK")
-                    }
-                }
-            )
-        }
+
     }
 }
 

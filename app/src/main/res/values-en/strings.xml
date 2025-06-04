@@ -30,7 +30,7 @@
     <string name="stats_section_npv">No games won yet</string>
     <string name="stats_section_games">Games</string>
     <string name="abb_part">Quit game</string>
-    <string name="conf_abb_part">Are you sure you want to quit the game? The solution will be shown.</string>
+    <string name="conf_abb_part">Are you sure you want to quit the game? You will be able to visualize the solution.</string>
     <string name="tasto_conf_abb">Yes, show solution</string>
     <string name="tasto_ann_abb">Cancel</string>
     <string name="game_over">Game over!</string>
@@ -39,4 +39,5 @@
     <string name="mess_vittoria">Congratulations, you solved the Sudoku puzzle!</string>
     <string name="sugg_term">Hints ended</string>
     <string name="mess_sugg_term">You have exhausted the available hints.</string>
+    <string name="mostra_sol">Show solution</string>
 </resources>

@@ -29,7 +29,7 @@
     <string name="stats_section_npv">Nessuna partita vinta.</string>
     <string name="stats_section_games">Partite</string>
     <string name="abb_part">Abbandona partita</string>
-    <string name="conf_abb_part">Sei sicuro di voler abbandonare la partita? Verrà mostrata la soluzione.</string>
+    <string name="conf_abb_part">Sei sicuro di voler abbandonare la partita? Potrai visualizzare la soluzione.</string>
     <string name="tasto_conf_abb">Sì, mostra soluzione</string>
     <string name="tasto_ann_abb">Annulla</string>
     <string name="game_over">Hai perso!</string>
@@ -38,4 +38,5 @@
     <string name="mess_vittoria">Complimenti, hai risolto il Sudoku!</string>
     <string name="sugg_term">Suggerimenti terminati</string>
     <string name="mess_sugg_term">Hai esaurito i suggerimenti disponibili.</string>
+    <string name="mostra_sol">Mostra soluzione</string>
 </resources>
