@@ -1,5 +1,6 @@
 package it.qbr.testapisudoku.ui
 
+import android.provider.Settings.Global.getString
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -10,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,7 +53,7 @@ fun HomeScreen(onStartGame: () -> Unit, onStorico: () -> Unit, onStats: () -> Un
                 colors = ButtonDefaults.buttonColors(containerColor = blue_primary),
                 shape = RoundedCornerShape(50.dp),
             ) {
-                Text(text = "Gioca", fontSize = 22.sp)
+                Text(text = stringResource(id = R.string.StartGame), fontSize = 22.sp)
             }
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -68,7 +70,7 @@ fun HomeScreen(onStartGame: () -> Unit, onStorico: () -> Unit, onStats: () -> Un
                         shape = RoundedCornerShape(50.dp)
                     ),
             ) {
-                Text("Statistiche", fontSize = 15.sp, color = blue_primary)
+                Text(text = stringResource(R.string.Stat), fontSize = 15.sp, color = blue_primary)
             }
 
             Spacer(modifier = Modifier.height(18.dp))
@@ -84,7 +86,7 @@ fun HomeScreen(onStartGame: () -> Unit, onStorico: () -> Unit, onStats: () -> Un
                         shape = RoundedCornerShape(50.dp)
                     ),
             ) {
-                Text("Storico", fontSize = 15.sp, color = blue_primary)
+                Text(text = stringResource(R.string.History), fontSize = 15.sp, color = blue_primary)
             }
 
             Text(

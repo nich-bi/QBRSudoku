@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -89,7 +90,7 @@ fun SudokuScreen(navController: NavHostController) {
                     modifier = Modifier.size(30.dp)
                 )
             }
-            Text("Scegli la difficoltà", fontSize = 22.sp)
+            Text(text = stringResource(R.string.scelta_difficolta), fontSize = 22.sp)
             Spacer(Modifier.height(24.dp))
             Difficulty.entries.forEach { diff ->
                 Button(
@@ -103,7 +104,15 @@ fun SudokuScreen(navController: NavHostController) {
                     colors = ButtonDefaults.buttonColors(containerColor = blue_primary),
                     shape = RoundedCornerShape(50.dp),
                 ) {
-                    Text(diff.name.lowercase().replaceFirstChar { it.uppercase() })
+                    Text( text =
+                        when(Difficulty.entries.indexOf(diff)) {
+                                0 -> stringResource(R.string.diff_facile)
+                                1 -> stringResource(R.string.diff_media)
+                                2 -> stringResource(R.string.diff_difficile)
+                                3 -> stringResource(R.string.diff_impossibile)
+                                else -> "Unknown"
+                        }
+                    )
                 }
             }
         }

@@ -25,6 +25,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -91,7 +92,7 @@ fun StoricoPartiteScreen(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Storico Partite") },
+                title = { Text( text = stringResource(R.string.StoricoPartite)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
@@ -123,7 +124,7 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                         .padding(10.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Filtra:", modifier = Modifier.padding(end = 8.dp))
+                        Text(text = stringResource(R.string.Filtra)+":", modifier = Modifier.padding(end = 8.dp))
                         // Filtro vittoria
                         FiltroTab(
                             options = FiltroVittoria.entries,
@@ -134,7 +135,7 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                     Spacer(Modifier.height(6.dp))
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Ordina per:", modifier = Modifier.padding(end = 8.dp))
+                        Text(text = stringResource(R.string.ordina_per)+":", modifier = Modifier.padding(end = 8.dp))
                         // Ordinamento
                         FiltroTab(
                             options = Ordinamento.entries,
@@ -210,7 +211,7 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                             horizontalAlignment = Alignment.CenterHorizontally,
                                             modifier = Modifier.weight(1f)
                                         ) {
-                                            Text("Data:", fontWeight = FontWeight.Bold)
+                                            Text(text = stringResource(R.string.OridinaPerData)+":", fontWeight = FontWeight.Bold)
                                             Text(
                                                 SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(partita.dataOra)),
                                                 style = MaterialTheme.typography.bodyMedium
@@ -223,7 +224,7 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                         ) {
                                             val min = partita.tempo / 60
                                             val secs = partita.tempo % 60
-                                            Text("Tempo:", fontWeight = FontWeight.Bold)
+                                            Text(text = stringResource(R.string.Tempo)+":", fontWeight = FontWeight.Bold)
                                             Text(
                                                 "%02d:%02d".format(min, secs),
                                                 style = MaterialTheme.typography.bodyMedium
@@ -234,7 +235,7 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                             horizontalAlignment = Alignment.CenterHorizontally,
                                             modifier = Modifier.weight(1f)
                                         ) {
-                                            Text("Difficoltà:", fontWeight = FontWeight.Bold)
+                                            Text(text = stringResource(R.string.Difficoltà)+":", fontWeight = FontWeight.Bold)
                                             Text(
                                                 partita.difficolta,
                                                 style = MaterialTheme.typography.bodyMedium,
@@ -247,7 +248,7 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                             horizontalAlignment = Alignment.CenterHorizontally,
                                             modifier = Modifier.weight(1f)
                                         ) {
-                                            Text("Errori:", fontWeight = FontWeight.Bold)
+                                            Text(text = stringResource(R.string.Errori)+":", fontWeight = FontWeight.Bold)
                                             Text(
                                                 "${partita.errori}",
                                                 style = MaterialTheme.typography.bodyMedium,
@@ -385,7 +386,7 @@ fun SudokuBoardPreview(boardJson: String) {
         }
     }
     Column(Modifier.padding(12.dp)) {
-        Text("Tabella finale:", fontWeight = FontWeight.Bold)
+        Text(text = stringResource(R.string.tabella_finale), fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(8.dp))
         // Box per centrare la griglia
         Box(

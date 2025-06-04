@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SudokuQBR</string>
+    <string name="StartGame">Play</string>
+    <string name="Stat">Statistics</string>
+    <string name="History">History</string>
+    <string name="Tempo">Time</string>
+    <string name="Errori">Error</string>
+    <string name="StoricoFiltraTutte">All</string>
+    <string name="StoricoFiltraVinte">Win</string>
+    <string name="StoricoFiltraPerse">Lose</string>
+    <string name="OridinaPerData">Date</string>
+    <string name="OrdinaPerTDG">Playtime</string>
+    <string name="Difficoltà">Difficulty</string>
+    <string name="StoricoPartite">Game History</string>
+    <string name="Filtra">Filter by</string>
+    <string name="ordina_per">Order by</string>
+    <string name="tabella_finale">Final Board</string>
+    <string name="stats_bt">Best Time</string>
+    <string name="stats_gs">Games Started</string>
+    <string name="stats_gc">Games completed</string>
+    <string name="stats_wr">Win rate</string>
+    <string name="stats_section_mp">Best games</string>
+    <string name="scelta_difficolta">Choose the game difficulty</string>
+    <string name="diff_facile">Easy</string>
+    <string name="diff_media">Mid</string>
+    <string name="diff_difficile">Hard</string>
+    <string name="diff_impossibile">Impossible</string>
+</resources>

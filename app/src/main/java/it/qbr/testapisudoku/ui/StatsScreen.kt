@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -38,7 +39,7 @@ fun StatsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Statistiche") },
+                title = { Text(text = stringResource(R.string.Stat)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
@@ -62,9 +63,9 @@ fun StatsScreen(
             // Sezione TEMPO
             StatsSection(
                 icon = R.drawable.ic_time,
-                title = "Tempo"
+                title = stringResource(R.string.Tempo)
             ) {
-                StatsRow(label = "Best time", value = bestTime?.let { formatTime(it) } ?: "--")
+                StatsRow(label = stringResource(R.string.stats_bt), value = bestTime?.let { formatTime(it) } ?: "--")
                 Divider(Modifier.padding(vertical = 4.dp))
                 StatsRow(label = "Average time", value = avgTime?.let { formatTime(it.toInt()) } ?: "--")
             }
@@ -76,11 +77,11 @@ fun StatsScreen(
                 icon = R.drawable.ic_game,
                 title = "Partite"
             ) {
-                StatsRow(label = "Games started", value = gamesStarted.toString())
+                StatsRow(label = stringResource(R.string.stats_gs), value = gamesStarted.toString())
                 Divider(Modifier.padding(vertical = 4.dp))
-                StatsRow(label = "Games completed", value = gamesCompleted.toString())
+                StatsRow(label = stringResource(R.string.stats_gc), value = gamesCompleted.toString())
                 Divider(Modifier.padding(vertical = 4.dp))
-                StatsRow(label = "Win rate", value = "$winRate%")
+                StatsRow(label = stringResource(R.string.stats_wr), value = "$winRate%")
             }
 
             Spacer(Modifier.height(20.dp))
@@ -88,7 +89,7 @@ fun StatsScreen(
             // Sezione MIGLIORI PARTITE
             StatsSection(
                 icon = R.drawable.ic_star,
-                title = "Migliori partite"
+                title = stringResource(R.string.stats_section_mp)
             ) {
                 if (topGames.isEmpty()) {
                     Text(
@@ -113,11 +114,11 @@ fun StatsScreen(
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "Time: ${formatTime(game.tempo)}",
+                                text = stringResource(R.string.Tempo) + formatTime(game.tempo),
                                 modifier = Modifier.weight(1f)
                             )
                             Text(
-                                text = "Errors: ${game.errori}",
+                                text = stringResource(R.string.Errori)+game.errori,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
