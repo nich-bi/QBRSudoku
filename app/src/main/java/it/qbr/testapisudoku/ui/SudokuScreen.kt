@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.google.gson.Gson
 import it.qbr.testapisudoku.R
-import it.qbr.testapisudoku.ui.theme.blue_primary
+import it.qbr.testapisudoku.ui.theme.blue_secondary
 
 
 @SuppressLint("MutableCollectionMutableState", "UnusedBoxWithConstraintsScope", "ConfigurationScreenWidthHeight")
@@ -103,7 +103,7 @@ fun SudokuScreen(navController: NavHostController) {
                         step = 1
                     },
                     Modifier.padding(8.dp).size(150.dp, 50.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = blue_primary),
+                    colors = ButtonDefaults.buttonColors(containerColor = blue_secondary),
                     shape = RoundedCornerShape(50.dp),
                 ) {
                     Text( text =
@@ -376,9 +376,8 @@ fun SudokuScreen(navController: NavHostController) {
             }
         }
 
-        // Messaggio partita vinta
+        // Partita vinta
         if (showWinDialog) {
-            // Salva la partita vinta una sola volta e mostra la schermata risultato
             LaunchedEffect(showWinDialog) {
                 if (showWinDialog) {
                     finalTime = seconds

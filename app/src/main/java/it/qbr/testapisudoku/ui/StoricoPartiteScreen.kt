@@ -35,7 +35,7 @@ import com.google.gson.reflect.TypeToken
 import it.qbr.testapisudoku.R
 import it.qbr.testapisudoku.db.AppDatabase
 import it.qbr.testapisudoku.db.Game
-import it.qbr.testapisudoku.ui.theme.blue_primary
+import it.qbr.testapisudoku.ui.theme.blue_secondary
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -191,7 +191,7 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                             Box(Modifier.fillMaxSize()) {
                                 Column(
                                     modifier = Modifier
-                                        .padding(12.dp)
+                                        .padding(11.dp)
                                         .fillMaxSize()
                                 ) {
                                     Row(
@@ -204,17 +204,18 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                             ),
                                             contentDescription = null,
                                             tint = if (partita.vinta) Color(0xFF2E7D32) else Color(0xFFC62828),
-                                            modifier = Modifier.size(36.dp)
+                                            modifier = Modifier.size(32.dp)
                                         )
                                         Column(
                                             verticalArrangement = Arrangement.Center,
                                             horizontalAlignment = Alignment.CenterHorizontally,
                                             modifier = Modifier.weight(1f)
                                         ) {
-                                            Text(text = stringResource(R.string.OridinaPerData)+":", fontWeight = FontWeight.Bold)
+                                            Text(text = stringResource(R.string.OridinaPerData)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
                                             Text(
                                                 SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(partita.dataOra)),
-                                                style = MaterialTheme.typography.bodyMedium
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                overflow = TextOverflow.Ellipsis
                                             )
                                         }
                                         Column(
@@ -224,7 +225,7 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                         ) {
                                             val min = partita.tempo / 60
                                             val secs = partita.tempo % 60
-                                            Text(text = stringResource(R.string.Tempo)+":", fontWeight = FontWeight.Bold)
+                                            Text(text = stringResource(R.string.Tempo)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
                                             Text(
                                                 "%02d:%02d".format(min, secs),
                                                 style = MaterialTheme.typography.bodyMedium
@@ -235,7 +236,7 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                             horizontalAlignment = Alignment.CenterHorizontally,
                                             modifier = Modifier.weight(1f)
                                         ) {
-                                            Text(text = stringResource(R.string.Difficoltà)+":", fontWeight = FontWeight.Bold)
+                                            Text(text = stringResource(R.string.Difficoltà)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
                                             Text(
                                                 partita.difficolta,
                                                 style = MaterialTheme.typography.bodyMedium,
@@ -248,7 +249,7 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                             horizontalAlignment = Alignment.CenterHorizontally,
                                             modifier = Modifier.weight(1f)
                                         ) {
-                                            Text(text = stringResource(R.string.Errori)+":", fontWeight = FontWeight.Bold)
+                                            Text(text = stringResource(R.string.Errori)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
                                             Text(
                                                 "${partita.errori}",
                                                 style = MaterialTheme.typography.bodyMedium,
@@ -295,8 +296,8 @@ fun <T> FiltroTab(
     onInvertiOrdine: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) where T : Enum<T> {
-    val tabHeight = 36.dp // aumenta l'altezza per avere spazio anche per la freccia
-    val arrowWidth = if (showArrows) tabHeight else 0.dp // la freccia è un quadrato come i tab
+    val tabHeight = 36.dp
+    val arrowWidth = if (showArrows) tabHeight else 0.dp
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
@@ -321,7 +322,7 @@ fun <T> FiltroTab(
                     .background(Color(0xFFCCE6FF))
                     .border(
                         width = 2.dp,
-                        color = blue_primary,
+                        color = blue_secondary,
                         shape = RoundedCornerShape(50)
                     ),
             )
@@ -357,7 +358,7 @@ fun <T> FiltroTab(
                             else opzione.name.replaceFirstChar { it.uppercase() },
                             fontSize = MaterialTheme.typography.bodySmall.fontSize,
                             fontWeight = if (selected == opzione) FontWeight.Bold else FontWeight.Normal,
-                            color = if (selected == opzione) blue_primary else MaterialTheme.colorScheme.onSurface,
+                            color = if (selected == opzione) blue_secondary else MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(horizontal = 6.dp)
                         )
                     }
@@ -397,7 +398,7 @@ fun SudokuBoardPreview(boardJson: String) {
         }
     }
     Column(Modifier.padding(12.dp)) {
-        Text(text = stringResource(R.string.tabella_finale), fontWeight = FontWeight.Bold)
+        Text(text = stringResource(R.string.tabella_finale), fontWeight = FontWeight.SemiBold)
         Spacer(Modifier.height(8.dp))
         // Box per centrare la griglia
         Box(

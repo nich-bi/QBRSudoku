@@ -61,7 +61,7 @@ import it.qbr.testapisudoku.ui.theme.background_same_number
 import it.qbr.testapisudoku.ui.theme.blue_background
 import it.qbr.testapisudoku.ui.theme.blue_number
 import it.qbr.testapisudoku.ui.theme.blue_p
-import it.qbr.testapisudoku.ui.theme.blue_primary
+import it.qbr.testapisudoku.ui.theme.blue_secondary
 import it.qbr.testapisudoku.ui.theme.gray
 import it.qbr.testapisudoku.ui.theme.light_gray
 import it.qbr.testapisudoku.ui.theme.quit_background
@@ -111,7 +111,7 @@ fun SudokuTopBar(
                                 text = ":",
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
-                                fontFamily = FontFamily(Font(R.font.segoeuithis)),
+                                fontFamily = FontFamily(Font(R.font.poppins_bold)),
                                 color = Color.Black
                             )
                         }
@@ -121,7 +121,7 @@ fun SudokuTopBar(
                     text = "Tempo",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily(Font(R.font.segoeuithis)),
+                    fontFamily = FontFamily(Font(R.font.poppins_regular)),
                     color = Color.Black
                 )
             }
@@ -140,7 +140,7 @@ fun SudokuTopBar(
                     text = "/",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Black,
-                    fontFamily = FontFamily(Font(R.font.segoeuithis)),
+                    fontFamily = FontFamily(Font(R.font.poppins_regular)),
                     color = Color.Black,
                 )
                 for (i in maxErrString.indices) {
@@ -155,7 +155,7 @@ fun SudokuTopBar(
                 text = "Errori",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Black,
-                fontFamily = FontFamily(Font(R.font.segoeuithis)),
+                fontFamily = FontFamily(Font(R.font.poppins_regular)),
                 color = Color.Black,
             )
         }
@@ -177,7 +177,7 @@ fun AnimatedDigit(digit: Char, key: String) {
             text = targetDigit.toString(),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            fontFamily = FontFamily(Font(R.font.segoeuithis)),
+            fontFamily = FontFamily(Font(R.font.poppins_bold)),
             color = Color.Black,
         )
     }

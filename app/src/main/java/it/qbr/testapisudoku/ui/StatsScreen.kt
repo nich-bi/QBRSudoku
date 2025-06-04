@@ -143,7 +143,7 @@ fun StatsSection(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFFE9E7F2), RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
             .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {

@@ -9,7 +9,7 @@
     <string name="StoricoFiltraVinte">Vinte</string>
     <string name="StoricoFiltraPerse">Perse</string>
     <string name="OridinaPerData">Data</string>
-    <string name="OrdinaPerTDG">Tempo di Gioco</string>
+    <string name="OrdinaPerTDG">Tempo</string>
     <string name="Difficoltà">Difficoltà</string>
     <string name="StoricoPartite">Storico Partite</string>
     <string name="Filtra">Filtra</string>
@@ -35,7 +35,7 @@
     <string name="game_over">Hai perso!</string>
     <string name="mess_max_err">Hai raggiunto il numero massimo di errori.</string>
     <string name="vittoria">Hai vinto!</string>
-    <string name="mess_vittoria">Complimenti, hai risolto il Sudoku!</string>
+    <string name="mess_vittoria">Hai vinto!</string>
     <string name="sugg_term">Suggerimenti terminati</string>
     <string name="mess_sugg_term">Hai esaurito i suggerimenti disponibili.</string>
     <string name="mostra_sol">Mostra soluzione</string>

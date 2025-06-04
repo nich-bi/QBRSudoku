@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.qbr.testapisudoku.R
-import it.qbr.testapisudoku.ui.theme.blue_primary
+import it.qbr.testapisudoku.ui.theme.blue_secondary
 
 
 
@@ -30,8 +30,8 @@ fun HomeScreen(onStartGame: () -> Unit, onStorico: () -> Unit, onStats: () -> Un
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = "Sudoku",
-                fontSize = 40.sp,
-                fontWeight = FontWeight.ExtraBold,
+                fontSize = 45.sp,
+                fontWeight = FontWeight.Bold,
             )
             Text(
                 text = "The ultimate game"
@@ -50,7 +50,7 @@ fun HomeScreen(onStartGame: () -> Unit, onStorico: () -> Unit, onStats: () -> Un
             Button(
                 onClick = onStartGame,
                 Modifier.padding(8.dp).size(150.dp, 50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = blue_primary),
+                colors = ButtonDefaults.buttonColors(containerColor = blue_secondary),
                 shape = RoundedCornerShape(50.dp),
             ) {
                 Text(text = stringResource(id = R.string.StartGame), fontSize = 22.sp)
@@ -66,11 +66,11 @@ fun HomeScreen(onStartGame: () -> Unit, onStorico: () -> Unit, onStats: () -> Un
                     .wrapContentWidth()
                     .border(
                         width = 2.dp,
-                        color = blue_primary,
+                        color = blue_secondary,
                         shape = RoundedCornerShape(50.dp)
                     ),
             ) {
-                Text(text = stringResource(R.string.Stat), fontSize = 15.sp, color = blue_primary)
+                Text(text = stringResource(R.string.Stat), fontSize = 15.sp, color = blue_secondary)
             }
 
             Spacer(modifier = Modifier.height(18.dp))
@@ -82,11 +82,11 @@ fun HomeScreen(onStartGame: () -> Unit, onStorico: () -> Unit, onStats: () -> Un
                     .wrapContentWidth()
                     .border(
                         width = 2.dp,
-                        color = blue_primary,
+                        color = blue_secondary,
                         shape = RoundedCornerShape(50.dp)
                     ),
             ) {
-                Text(text = stringResource(R.string.History), fontSize = 15.sp, color = blue_primary)
+                Text(text = stringResource(R.string.History), fontSize = 15.sp, color = blue_secondary)
             }
 
             Text(

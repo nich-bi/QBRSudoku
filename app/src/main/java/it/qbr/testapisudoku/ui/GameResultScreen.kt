@@ -13,10 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.qbr.testapisudoku.R
-import it.qbr.testapisudoku.ui.theme.blue_primary
+import it.qbr.testapisudoku.ui.theme.blue_secondary
+
 
 @SuppressLint("DefaultLocale")
 @Composable
@@ -43,8 +45,12 @@ fun GameResultScreen(
         Spacer(Modifier.height(32.dp))
         Text(
             text = if (isWin) stringResource(R.string.mess_vittoria) else stringResource(R.string.game_over),
-            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-            color = if (isWin) Color(0xFF2E7D32) else Color(0xFFC62828)
+            style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
+            color = if (isWin) Color(0xFF2E7D32) else Color(0xFFC62828),
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally),
+            textAlign = TextAlign.Center
         )
         Spacer(Modifier.height(12.dp))
         Row(
@@ -90,17 +96,17 @@ fun GameResultScreen(
                     .wrapContentWidth()
                     .border(
                         width = 2.dp,
-                        color = blue_primary,
+                        color = blue_secondary,
                         shape = RoundedCornerShape(50.dp)
                     ),
             ) {
-                Text(stringResource(R.string.mostra_sol), fontSize = 15.sp, color = blue_primary)
+                Text(stringResource(R.string.mostra_sol), fontSize = 15.sp, color = blue_secondary)
             }
             Spacer(Modifier.height(8.dp))
         }
         Button(
             onClick = onHomeClick,
-            colors = ButtonDefaults.buttonColors(containerColor = blue_primary),
+            colors = ButtonDefaults.buttonColors(containerColor = blue_secondary),
             shape = RoundedCornerShape(50.dp),
         ) {
             Text("Home", fontSize = 15.sp)
