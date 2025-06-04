@@ -177,7 +177,6 @@ fun SudokuScreen(navController: NavHostController) {
                 CircularProgressIndicator(color = Color.Blue)
             }
         } else {
-            // ----------- LAYOUT RESPONSIVE CON BOARD SEMPRE VISIBILE -------------
             val configuration = LocalConfiguration.current
             val screenWidth = configuration.screenWidthDp.dp
             val screenHeight = configuration.screenHeightDp.dp
@@ -210,7 +209,7 @@ fun SudokuScreen(navController: NavHostController) {
                 ) {
                     val (boardRef, iconBar, keypad) = createRefs()
 
-                    // BOARD: sempre quadrata e visibile
+                    // BOARD
                     Box(
                         modifier = Modifier
                             .constrainAs(boardRef) {
@@ -299,8 +298,8 @@ fun SudokuScreen(navController: NavHostController) {
         if (showNoHintsDialog) {
             AlertDialog(
                 onDismissRequest = { showNoHintsDialog = false },
-                title = { Text("Suggerimenti terminati") },
-                text = { Text("Hai esaurito i suggerimenti disponibili.") },
+                title = { stringResource(R.string.sugg_term) },
+                text = { stringResource(R.string.mess_sugg_term) },
                 confirmButton = {
                     TextButton(onClick = { showNoHintsDialog = false }) {
                         Text("OK")
@@ -348,19 +347,19 @@ fun SudokuScreen(navController: NavHostController) {
         if (showAbandonConfirm) {
             AlertDialog(
                 onDismissRequest = { showAbandonConfirm = false },
-                title = { Text("Abbandona partita") },
-                text = { Text("Sei sicuro di voler abbandonare la partita? Verrà mostrata la soluzione.") },
+                title = { stringResource(R.string.abb_part) },
+                text = { stringResource(R.string.conf_abb_part) },
                 confirmButton = {
                     TextButton(onClick = {
                         showSolution = true
                         showAbandonConfirm = false
                     }) {
-                        Text("Sì, mostra soluzione")
+                        Text(stringResource(R.string.tasto_conf_abb))
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showAbandonConfirm = false }) {
-                        Text("Annulla")
+                        Text(stringResource(R.string.tasto_ann_abb))
                     }
                 }
             )
@@ -369,8 +368,8 @@ fun SudokuScreen(navController: NavHostController) {
         if (showGameOver) {
             AlertDialog(
                 onDismissRequest = { },
-                title = { Text("Hai perso!") },
-                text = { Text("Hai raggiunto il numero massimo di errori.\nVerrà generata una nuova partita.") },
+                title = { Text(stringResource(R.string.game_over)) },
+                text = { Text(stringResource(R.string.mess_max_err)) },
                 confirmButton = {
                     TextButton(onClick = {
                         CoroutineScope(Dispatchers.IO).launch {
@@ -399,8 +398,8 @@ fun SudokuScreen(navController: NavHostController) {
         if (showWinDialog) {
             AlertDialog(
                 onDismissRequest = { },
-                title = { Text("Hai vinto!") },
-                text = { Text("Complimenti, hai risolto il Sudoku!") },
+                title = { stringResource(R.string.vittoria) },
+                text = { stringResource(R.string.mess_vittoria) },
                 confirmButton = {
                     TextButton(onClick = {
                         CoroutineScope(Dispatchers.IO).launch {

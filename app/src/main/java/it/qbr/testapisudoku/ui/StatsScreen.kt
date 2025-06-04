@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,8 +67,8 @@ fun StatsScreen(
                 title = stringResource(R.string.Tempo)
             ) {
                 StatsRow(label = stringResource(R.string.stats_bt), value = bestTime?.let { formatTime(it) } ?: "--")
-                Divider(Modifier.padding(vertical = 4.dp))
-                StatsRow(label = "Average time", value = avgTime?.let { formatTime(it.toInt()) } ?: "--")
+                HorizontalDivider(Modifier.padding(vertical = 4.dp))
+                StatsRow(label = stringResource(R.string.stats_at), value = avgTime?.let { formatTime(it.toInt()) } ?: "--")
             }
 
             Spacer(Modifier.height(20.dp))
@@ -75,12 +76,12 @@ fun StatsScreen(
             // Sezione PARTITE
             StatsSection(
                 icon = R.drawable.ic_game,
-                title = "Partite"
+                title = stringResource(R.string.stats_section_games)
             ) {
                 StatsRow(label = stringResource(R.string.stats_gs), value = gamesStarted.toString())
-                Divider(Modifier.padding(vertical = 4.dp))
+                HorizontalDivider(Modifier.padding(vertical = 4.dp))
                 StatsRow(label = stringResource(R.string.stats_gc), value = gamesCompleted.toString())
-                Divider(Modifier.padding(vertical = 4.dp))
+                HorizontalDivider(Modifier.padding(vertical = 4.dp))
                 StatsRow(label = stringResource(R.string.stats_wr), value = "$winRate%")
             }
 
@@ -93,7 +94,7 @@ fun StatsScreen(
             ) {
                 if (topGames.isEmpty()) {
                     Text(
-                        text = "No games won yet.",
+                        text = stringResource(R.string.stats_section_npv),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp),
@@ -114,15 +115,16 @@ fun StatsScreen(
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = stringResource(R.string.Tempo) + formatTime(game.tempo),
+                                text = stringResource(R.string.Tempo) + ": " + formatTime(game.tempo),
                                 modifier = Modifier.weight(1f)
                             )
                             Text(
-                                text = stringResource(R.string.Errori)+game.errori,
+                                text = stringResource(R.string.Errori) + ": " + game.errori,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
-                        if (idx < topGames.lastIndex) Divider()
+                        if (idx < topGames.lastIndex) HorizontalDivider(
+                        )
                     }
                 }
             }
