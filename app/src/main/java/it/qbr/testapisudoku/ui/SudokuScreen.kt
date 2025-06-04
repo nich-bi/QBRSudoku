@@ -1,5 +1,6 @@
 package it.qbr.testapisudoku.ui
 
+import android.R.attr.text
 import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.compose.foundation.layout.*
@@ -177,16 +178,6 @@ fun SudokuScreen(navController: NavHostController) {
                 CircularProgressIndicator(color = Color.Blue)
             }
         } else {
-            val configuration = LocalConfiguration.current
-            val screenWidth = configuration.screenWidthDp.dp
-            val screenHeight = configuration.screenHeightDp.dp
-            val topBarHeight = 56.dp
-            val iconBarHeight = 56.dp
-            val keypadHeight = 72.dp
-            val verticalPadding = 16.dp * 2
-            val maxBoardHeight = screenHeight - topBarHeight - iconBarHeight - keypadHeight - verticalPadding
-            val boardSize = androidx.compose.ui.unit.min(screenWidth, maxBoardHeight).coerceAtLeast(0.dp)
-
             Scaffold(
                 topBar = {
                     Box(modifier = Modifier.statusBarsPadding()) {
@@ -200,24 +191,17 @@ fun SudokuScreen(navController: NavHostController) {
                 },
                 containerColor = Color(0xFFE7EBF0)
             ) { innerPadding ->
-
-                ConstraintLayout(
+                Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
-                        .padding(16.dp)
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    val (boardRef, iconBar, keypad) = createRefs()
-
                     // BOARD
                     Box(
                         modifier = Modifier
-                            .constrainAs(boardRef) {
-                                top.linkTo(parent.top, margin = topBarHeight)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                            }
-                            .size(boardSize)
+                            .fillMaxWidth()
                             .aspectRatio(1f),
                         contentAlignment = Alignment.Center
                     ) {
@@ -235,7 +219,6 @@ fun SudokuScreen(navController: NavHostController) {
                             modifier = Modifier.fillMaxSize()
                         )
                     }
-
                     // ICON BAR
                     SudokuIconBar(
                         noteMode = noteMode,
@@ -261,15 +244,8 @@ fun SudokuScreen(navController: NavHostController) {
                             context.startActivity(intent)
                         },
                         modifier = Modifier
-                            .constrainAs(iconBar) {
-                                top.linkTo(boardRef.bottom, margin = 8.dp)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                            }
-                            .height(iconBarHeight)
                             .fillMaxWidth()
                     )
-
                     // KEYPAD
                     SudokuKeypad(
                         onNumberSelected = { number ->
@@ -280,13 +256,6 @@ fun SudokuScreen(navController: NavHostController) {
                         },
                         disabledNumbers = completedNumbers,
                         modifier = Modifier
-                            .constrainAs(keypad) {
-                                top.linkTo(iconBar.bottom, margin = 8.dp)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                                bottom.linkTo(parent.bottom)
-                            }
-                            .height(keypadHeight)
                             .fillMaxWidth(),
                         onAbbandona = { showAbandonConfirm = true }
                     )
@@ -347,8 +316,8 @@ fun SudokuScreen(navController: NavHostController) {
         if (showAbandonConfirm) {
             AlertDialog(
                 onDismissRequest = { showAbandonConfirm = false },
-                title = { stringResource(R.string.abb_part) },
-                text = { stringResource(R.string.conf_abb_part) },
+                title = { Text(stringResource(R.string.abb_part)) },
+                text = { Text(stringResource(R.string.conf_abb_part)) },
                 confirmButton = {
                     TextButton(onClick = {
                         showSolution = true
@@ -398,8 +367,8 @@ fun SudokuScreen(navController: NavHostController) {
         if (showWinDialog) {
             AlertDialog(
                 onDismissRequest = { },
-                title = { stringResource(R.string.vittoria) },
-                text = { stringResource(R.string.mess_vittoria) },
+                title = { Text(stringResource(R.string.vittoria)) },
+                text = { Text(stringResource(R.string.mess_vittoria)) },
                 confirmButton = {
                     TextButton(onClick = {
                         CoroutineScope(Dispatchers.IO).launch {
