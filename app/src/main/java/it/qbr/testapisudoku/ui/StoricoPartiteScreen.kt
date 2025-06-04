@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-enum class FiltroVittoria(val label: String) { TUTTE("Tutte"), VINTE("Vinte"), PERSE("Perse") }
+enum class FiltroVittoria { TUTTE, VINTE, PERSE }
 enum class Ordinamento(val label: String) { CRONO("Data"), TEMPO("Tempo di gioco") }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -341,8 +341,19 @@ fun <T> FiltroTab(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            if (opzione is FiltroVittoria) opzione.label
-                            else if (opzione is Ordinamento) opzione.label
+                            if (opzione is FiltroVittoria) stringResource(
+                                when (opzione) {
+                                    FiltroVittoria.TUTTE -> R.string.StoricoFiltraTutte
+                                    FiltroVittoria.VINTE -> R.string.StoricoFiltraVinte
+                                    FiltroVittoria.PERSE -> R.string.StoricoFiltraPerse
+                                }
+                            )
+                            else if (opzione is Ordinamento) stringResource(
+                                when (opzione) {
+                                    Ordinamento.CRONO -> R.string.OridinaPerData
+                                    Ordinamento.TEMPO -> R.string.OrdinaPerTDG
+                                }
+                            )
                             else opzione.name.replaceFirstChar { it.uppercase() },
                             fontSize = MaterialTheme.typography.bodySmall.fontSize,
                             fontWeight = if (selected == opzione) FontWeight.Bold else FontWeight.Normal,
