@@ -8,7 +8,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -66,8 +68,10 @@ fun SudokuScreen(navController: NavHostController) {
     var showSolution by remember { mutableStateOf(false) }
 
     var showResultScreen by remember { mutableStateOf(false) }
-    var resultIsWin by remember { mutableStateOf(false) }
-    var finalTime by remember { mutableIntStateOf(0) }
+    var resultIsWin by remember { mutableStateOf(false) } // true se ha vinto, false se ha perso
+    var finalTime by remember { mutableIntStateOf(0) } // secondi al momento dell'abbandono della partita
+
+    var isPaused by remember { mutableStateOf(false) }
 
     LaunchedEffect(cells) {
         completedNumbers.clear()
@@ -129,9 +133,10 @@ fun SudokuScreen(navController: NavHostController) {
             solution = solutionBoard.cells
             loading = false
         }
-        LaunchedEffect(loading) {
+
+        LaunchedEffect(loading, isPaused) {
             if (!loading) {
-                while (true) {
+                while (!isPaused) {
                     delay(1000)
                     seconds++
                 }
@@ -186,7 +191,9 @@ fun SudokuScreen(navController: NavHostController) {
                             maxErr = maxErrors,
                             seconds = seconds,
                             errorCount = errorCount,
-                            onHomeClick = { showDialog = true }
+                            isPaused = isPaused,
+                            onHomeClick = { showDialog = true },
+                            onPauseClick = { isPaused = !isPaused }
                         )
                     }
                 },
@@ -203,7 +210,17 @@ fun SudokuScreen(navController: NavHostController) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(1f),
+                            .aspectRatio(1f)
+                            .then(if (isPaused) Modifier.blur(16.dp) else Modifier)
+                            .pointerInput(isPaused) {
+                                if (isPaused) {
+                                    awaitPointerEventScope {
+                                        while (isPaused) {
+                                            awaitPointerEvent()
+                                        }
+                                    }
+                                }
+                            },
                         contentAlignment = Alignment.Center
                     ) {
                         SudokuBoard(
@@ -215,10 +232,14 @@ fun SudokuScreen(navController: NavHostController) {
                             onCellSelected = { row, col ->
                                 selectedCell = row to col
                                 selectedNumber = if (cells.getOrNull(row)?.getOrNull(col) != 0) cells[row][col] else null
+
                             },
                             onSuggestMove = { },
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
+                            enabled = !isPaused
                         )
+
+
                     }
                     // ICON BAR
                     SudokuIconBar(
@@ -270,8 +291,8 @@ fun SudokuScreen(navController: NavHostController) {
         if (showNoHintsDialog) {
             AlertDialog(
                 onDismissRequest = { showNoHintsDialog = false },
-                title = { stringResource(R.string.sugg_term) },
-                text = { stringResource(R.string.mess_sugg_term) },
+                title = { Text(stringResource(R.string.sugg_term)) },
+                text = { Text(stringResource(R.string.mess_sugg_term)) },
                 confirmButton = {
                     TextButton(onClick = { showNoHintsDialog = false }) {
                         Text("OK")

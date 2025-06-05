@@ -1,6 +1,5 @@
 package it.qbr.testapisudoku.ui
 
-import android.R.id.primary
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -33,13 +32,71 @@ fun HomeScreen(
     onStorico: () -> Unit,
     onStats: () -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        // Titolo e immagine con padding dall'alto e tra loro
+    Scaffold(
+        topBar = {
+            // Empty: we handle title in content
+        },
+        bottomBar = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 40.dp) // Adequate space from bottom
+            ) {
+                Button(
+                    onClick = onStartGame,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .size(150.dp, 50.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = blue_secondary),
+                    shape = RoundedCornerShape(50.dp),
+                ) {
+                    Text(text = stringResource(id = R.string.StartGame), fontSize = 22.sp)
+                }
+                Spacer(modifier = Modifier.height(18.dp))
+                Button(
+                    onClick = onStats,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .border(
+                            width = 2.dp,
+                            color = blue_secondary,
+                            shape = RoundedCornerShape(50.dp)
+                        ),
+                ) {
+                    Text(text = stringResource(R.string.Stat), fontSize = 15.sp, color = blue_secondary)
+                }
+                Spacer(modifier = Modifier.height(18.dp))
+                Button(
+                    onClick = onStorico,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .border(
+                            width = 2.dp,
+                            color = blue_secondary,
+                            shape = RoundedCornerShape(50.dp)
+                        ),
+                ) {
+                    Text(text = stringResource(R.string.History), fontSize = 15.sp, color = blue_secondary)
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "by QBR",
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+            }
+        }
+    ) { innerPadding ->
+        // Content
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .align(Alignment.TopCenter)
+                .fillMaxSize()
                 .padding(top = 96.dp)
+                .padding(innerPadding)
         ) {
             TypewriterText(
                 text = "QBRSudoku",
@@ -48,61 +105,7 @@ fun HomeScreen(
             Image(
                 painter = painterResource(id = R.drawable.sudokuimage),
                 contentDescription = "Logo",
-                modifier = Modifier
-                    .size(240.dp)
-            )
-        }
-
-        // Bottoni più in alto rispetto al bordo inferiore
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 100.dp) // Spazio tra i bottoni e il bordo inferiore
-        ) {
-            Button(
-                onClick = onStartGame,
-                Modifier
-                    .padding(8.dp)
-                    .size(150.dp, 50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = blue_secondary),
-                shape = RoundedCornerShape(50.dp),
-            ) {
-                Text(text = stringResource(id = R.string.StartGame), fontSize = 22.sp)
-            }
-            Spacer(modifier = Modifier.height(18.dp))
-            Button(
-                onClick = onStats,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .border(
-                        width = 2.dp,
-                        color = blue_secondary,
-                        shape = RoundedCornerShape(50.dp)
-                    ),
-            ) {
-                Text(text = stringResource(R.string.Stat), fontSize = 15.sp, color = blue_secondary)
-            }
-            Spacer(modifier = Modifier.height(18.dp))
-            Button(
-                onClick = onStorico,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .border(
-                        width = 2.dp,
-                        color = blue_secondary,
-                        shape = RoundedCornerShape(50.dp)
-                    ),
-            ) {
-                Text(text = stringResource(R.string.History), fontSize = 15.sp, color = blue_secondary)
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "by QBR",
-                fontSize = 16.sp,
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.size(240.dp)
             )
         }
     }
@@ -113,14 +116,14 @@ fun HomeScreen(
 @Composable
 fun TypewriterText(
     text: String,
-    specialPartLength: Int = 3, // "QBR" sono i primi 3 caratteri
+    specialPartLength: Int = 3, // "QBR"
     specialColor: Color = blue_secondary, // colore di "QBR"
     restColor: Color = Color.Unspecified,
     fontSize: TextUnit = 45.sp,
     fontWeight: FontWeight = FontWeight.Bold,
-    charDelayMillis: Long = 250L // più lento!
+    charDelayMillis: Long = 250L // velocita' di scrittura
 ) {
-    var visibleTextLength by remember { mutableStateOf(0) }
+    var visibleTextLength by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(text) {
         visibleTextLength = 0
