@@ -400,22 +400,23 @@ fun SudokuKeypad(
     onNumberSelected: (Int) -> Unit,
     disabledNumbers: List<Int>,
     modifier: Modifier,
+    enabled: Boolean = true, // Per disattivare quando si mette pausa
     onAbbandona: (() -> Unit)? = null
 ) {
     Column(
-        Modifier
+        modifier
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Prima fila: 1-5
         Row(
             Modifier
-                .fillMaxWidth().
-                padding(horizontal = 16.dp),
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             for (number in 1..5) {
-                val isDisabled = disabledNumbers.contains(number)
+                val isDisabled = disabledNumbers.contains(number) || !enabled
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -436,15 +437,15 @@ fun SudokuKeypad(
             }
         }
         Spacer(modifier = Modifier.height(10.dp))
-        // Seconda fila: 6-9 + un Box vuoto alla fine
+        // Seconda fila: 6-9 + "abbandona partita"
         Row(
             Modifier
-                .fillMaxWidth().
-                padding(horizontal = 16.dp),
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             for (number in 6..9) {
-                val isDisabled = disabledNumbers.contains(number)
+                val isDisabled = disabledNumbers.contains(number) || !enabled
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -471,9 +472,9 @@ fun SudokuKeypad(
                     .padding(4.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .background(quit_background)
-                    .clickable()  {
-                        onAbbandona?.invoke()
-                        },
+                    .clickable(enabled = enabled)  {
+                        if (enabled) onAbbandona?.invoke()
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(

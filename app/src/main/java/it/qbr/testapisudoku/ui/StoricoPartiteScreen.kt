@@ -294,7 +294,7 @@ fun <T> FiltroTab(
     showArrows: Boolean = false,
     ordineDecrescente: Boolean = true,
     onInvertiOrdine: (() -> Unit)? = null,
-    modifier: Modifier = Modifier
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) where T : Enum<T> {
     val tabHeight = 36.dp
     val arrowWidth = if (showArrows) tabHeight else 0.dp

@@ -89,6 +89,9 @@ fun GameResultScreen(
         }
         Spacer(Modifier.height(24.dp))
         if (!isWin && !showSolution) {
+
+
+
             Button(
                 onClick = { showSolution = true },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
@@ -102,14 +105,19 @@ fun GameResultScreen(
             ) {
                 Text(stringResource(R.string.mostra_sol), fontSize = 15.sp, color = blue_secondary)
             }
+
             Spacer(Modifier.height(8.dp))
         }
         Button(
             onClick = onHomeClick,
+            modifier = Modifier
+                .padding(8.dp)
+                .size(150.dp, 50.dp),
             colors = ButtonDefaults.buttonColors(containerColor = blue_secondary),
             shape = RoundedCornerShape(50.dp),
         ) {
-            Text("Home", fontSize = 15.sp)
+            Text("Home", fontSize = 22.sp)
         }
     }
 }
+

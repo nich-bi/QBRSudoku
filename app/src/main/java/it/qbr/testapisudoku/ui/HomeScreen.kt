@@ -34,14 +34,13 @@ fun HomeScreen(
 ) {
     Scaffold(
         topBar = {
-            // Empty: we handle title in content
         },
         bottomBar = {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 40.dp) // Adequate space from bottom
+                    .padding(bottom = 40.dp)
             ) {
                 Button(
                     onClick = onStartGame,

@@ -2,6 +2,7 @@ package it.qbr.testapisudoku.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -72,6 +73,12 @@ fun SudokuScreen(navController: NavHostController) {
     var finalTime by remember { mutableIntStateOf(0) } // secondi al momento dell'abbandono della partita
 
     var isPaused by remember { mutableStateOf(false) }
+
+    // Blur graduale
+    val blurDp by animateDpAsState(
+        targetValue = if (isPaused) 16.dp else 0.dp,
+        label = "BlurAnimation"
+    )
 
     LaunchedEffect(cells) {
         completedNumbers.clear()
@@ -193,7 +200,12 @@ fun SudokuScreen(navController: NavHostController) {
                             errorCount = errorCount,
                             isPaused = isPaused,
                             onHomeClick = { showDialog = true },
-                            onPauseClick = { isPaused = !isPaused }
+                            onPauseClick = {
+                                isPaused = !isPaused
+                                if (isPaused) {
+                                    selectedCell = null // Deseleziona la cella se in pausa
+                                }
+                            }
                         )
                     }
                 },
@@ -211,7 +223,7 @@ fun SudokuScreen(navController: NavHostController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(1f)
-                            .then(if (isPaused) Modifier.blur(16.dp) else Modifier)
+                            .blur(blurDp)
                             .pointerInput(isPaused) {
                                 if (isPaused) {
                                     awaitPointerEventScope {
@@ -279,6 +291,7 @@ fun SudokuScreen(navController: NavHostController) {
                         disabledNumbers = completedNumbers,
                         modifier = Modifier
                             .fillMaxWidth(),
+                        enabled = !isPaused,
                         onAbbandona = { showAbandonConfirm = true }
                     )
                 }
@@ -369,59 +382,55 @@ fun SudokuScreen(navController: NavHostController) {
 
 
         // Partita persa
-        if (showGameOver) {
+        LaunchedEffect(showGameOver) {
+            if (showGameOver) {
 
-
-            LaunchedEffect(showGameOver) {
-                if (showGameOver) {
-
-                    finalTime = seconds
-                    CoroutineScope(Dispatchers.IO).launch {
-                        AppDatabase.getDatabase(context).partitaDao().inserisci(
-                            Game(
-                                dataOra = System.currentTimeMillis(),
-                                vinta = false,
-                                tempo = seconds,
-                                difficolta = selectedDifficulty?.name ?: "",
-                                errori = errorCount,
-                                initialBoard = Gson().toJson(board),
-                                solutionBoard = Gson().toJson(solution),
-                                finalBard = Gson().toJson(cells)
-                            )
+                finalTime = seconds
+                CoroutineScope(Dispatchers.IO).launch {
+                    AppDatabase.getDatabase(context).partitaDao().inserisci(
+                        Game(
+                            dataOra = System.currentTimeMillis(),
+                            vinta = false,
+                            tempo = seconds,
+                            difficolta = selectedDifficulty?.name ?: "",
+                            errori = errorCount,
+                            initialBoard = Gson().toJson(board),
+                            solutionBoard = Gson().toJson(solution),
+                            finalBard = Gson().toJson(cells)
                         )
-                    }
-                    resultIsWin = false
-                    showResultScreen = true
-                    showGameOver = false
+                    )
                 }
+                resultIsWin = false
+                showResultScreen = true
+                showGameOver = false
             }
         }
+
 
         // Partita vinta
-        if (showWinDialog) {
-            LaunchedEffect(showWinDialog) {
-                if (showWinDialog) {
-                    finalTime = seconds
-                    CoroutineScope(Dispatchers.IO).launch {
-                        AppDatabase.getDatabase(context).partitaDao().inserisci(
-                            Game(
-                                dataOra = System.currentTimeMillis(),
-                                vinta = true,
-                                tempo = seconds,
-                                difficolta = selectedDifficulty?.name ?: "",
-                                errori = errorCount,
-                                initialBoard = Gson().toJson(board),
-                                solutionBoard = Gson().toJson(solution),
-                                finalBard = Gson().toJson(cells)
-                            )
+        LaunchedEffect(showWinDialog) {
+            if (showWinDialog) {
+                finalTime = seconds
+                CoroutineScope(Dispatchers.IO).launch {
+                    AppDatabase.getDatabase(context).partitaDao().inserisci(
+                        Game(
+                            dataOra = System.currentTimeMillis(),
+                            vinta = true,
+                            tempo = seconds,
+                            difficolta = selectedDifficulty?.name ?: "",
+                            errori = errorCount,
+                            initialBoard = Gson().toJson(board),
+                            solutionBoard = Gson().toJson(solution),
+                            finalBard = Gson().toJson(cells)
                         )
-                    }
-                    resultIsWin = true
-                    showResultScreen = true
-                    showWinDialog = false
+                    )
                 }
+                resultIsWin = true
+                showResultScreen = true
+                showWinDialog = false
             }
         }
+
 
 
         if (showResultScreen) {
