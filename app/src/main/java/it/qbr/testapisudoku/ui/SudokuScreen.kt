@@ -80,6 +80,7 @@ fun SudokuScreen(navController: NavHostController) {
         label = "BlurAnimation"
     )
 
+
     LaunchedEffect(cells) {
         completedNumbers.clear()
         for (n in 1..9) {

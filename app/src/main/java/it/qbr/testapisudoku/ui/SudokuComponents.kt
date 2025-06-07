@@ -578,7 +578,7 @@ fun SudokuIconBar(
 
             IconButton(
                 onClick = {
-                    if (hintsLeft <= maxHints) {
+                    if (hintsLeft < maxHints) {
                         hintPressed = true
                         onSuggest()
                     } else {
@@ -588,13 +588,13 @@ fun SudokuIconBar(
                 enabled = isSuggestEnabled,
                 modifier = Modifier.padding(bottom = 50.dp).size(80.dp)
             ) {
-                if (hintPressed && hintsLeft <= maxHints) {
+                if (hintPressed && hintsLeft < maxHints) {
                     LaunchedEffect(hintPressed, hintsLeft) {
                         kotlinx.coroutines.delay(500)
                         hintPressed = false
                     }
                 }
-                val (iconRes, iconTint) = if (hintsLeft > maxHints) {
+                val (iconRes, iconTint) = if (hintsLeft >= maxHints) {
                     R.drawable.ic_no_hints_left to Color.Gray
                 } else if (hintPressed) {
                     R.drawable.ic_hints_fill to Color.Black
