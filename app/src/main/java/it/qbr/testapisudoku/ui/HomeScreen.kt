@@ -119,7 +119,7 @@ fun TypewriterText(
     specialColor: Color = blue_secondary, // colore di "QBR"
     restColor: Color = Color.Unspecified,
     fontSize: TextUnit = 45.sp,
-    fontWeight: FontWeight = FontWeight.Bold,
+    fontWeight: FontWeight = FontWeight.ExtraBold,
     charDelayMillis: Long = 250L // velocita' di scrittura
 ) {
     var visibleTextLength by remember { mutableIntStateOf(0) }

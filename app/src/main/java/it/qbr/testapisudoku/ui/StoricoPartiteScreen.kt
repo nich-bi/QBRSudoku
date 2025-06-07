@@ -192,7 +192,9 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                 Column(
                                     modifier = Modifier
                                         .padding(11.dp)
-                                        .fillMaxSize()
+                                        .fillMaxWidth()
+                                        .fillMaxHeight(),
+                                    verticalArrangement = Arrangement.Center
                                 ) {
                                     Row(
                                         Modifier.fillMaxWidth(),
@@ -260,6 +262,7 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                     }
                                     // Contenuto espanso
                                     if (expanded) {
+                                        Spacer(modifier = Modifier.height(14.dp))
                                         HorizontalDivider(
                                             modifier = Modifier,
                                             0.5.dp,
@@ -386,6 +389,7 @@ fun <T> FiltroTab(
         }
     }
 }
+
 
 @Composable
 fun SudokuBoardPreview(boardJson: String) {

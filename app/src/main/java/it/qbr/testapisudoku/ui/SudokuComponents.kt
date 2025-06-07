@@ -614,7 +614,7 @@ fun SudokuIconBar(
                     modifier = Modifier.padding(top = 55.dp),
                     fontWeight = FontWeight.SemiBold
                 )
-                if (hintsLeft <= maxHints) {
+                if (hintsLeft < maxHints) {
                     Box(
                         modifier = Modifier
                             .size(16.dp)
