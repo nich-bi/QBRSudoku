@@ -1,9 +1,8 @@
 package it.qbr.testapisudoku.ui
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.core.Spring
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
@@ -163,120 +163,111 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                 ) {
                     items(storicoFiltratoOrdinato) { partita ->
                         val expanded = expandedStates[partita.dataOra] == true
-                        val cardMinHeight = 68.dp
-                        val cardMaxHeight = if (expanded) 365.dp else cardMinHeight
-                        val animatedHeight by animateDpAsState(
-                            targetValue = cardMaxHeight,
-                            animationSpec = spring(
-                                dampingRatio = Spring.DampingRatioLowBouncy,
-                                stiffness = Spring.StiffnessMedium
-                            ),
-                            label = "expandableCardHeight"
-                        )
 
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 12.dp)
-                                .height(animatedHeight)
+                                .animateContentSize() // Lunghezza card in base al contenuto
                                 .clickable {
                                     expandedStates[partita.dataOra] = expandedStates[partita.dataOra] != true
                                 },
                             colors = CardDefaults.cardColors(
                                 containerColor = if (partita.vinta) Color(0xFFD0F5E8) else Color(0xFFFFE0E0)
                             ),
-                            elevation = CardDefaults.cardElevation(4.dp)
+                            shape = RoundedCornerShape(16.dp),
+                            // elevation = CardDefaults.cardElevation(4.dp)
                         ) {
-                            // Box per gestire l’overflow del contenuto in caso di compressione
-                            Box(Modifier.fillMaxSize()) {
-                                Column(
-                                    modifier = Modifier
-                                        .padding(11.dp)
-                                        .fillMaxWidth()
-                                        .fillMaxHeight(),
-                                    verticalArrangement = Arrangement.Center
+
+                            Column(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .padding(11.dp)
+                                    .fillMaxWidth()
+                                    .defaultMinSize(minHeight = if (expanded) Dp.Unspecified else 45.dp),
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Row(
+                                    Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Row(
-                                        Modifier.fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically
+                                    Icon(
+                                        painter = painterResource(
+                                            id = if (partita.vinta) R.drawable.ic_win else R.drawable.ic_lose
+                                        ),
+                                        contentDescription = null,
+                                        tint = if (partita.vinta) Color(0xFF2E7D32) else Color(0xFFC62828),
+                                        modifier = Modifier.size(32.dp)
+                                    )
+                                    Column(
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier.weight(1f)
                                     ) {
-                                        Icon(
-                                            painter = painterResource(
-                                                id = if (partita.vinta) R.drawable.ic_win else R.drawable.ic_lose
-                                            ),
-                                            contentDescription = null,
-                                            tint = if (partita.vinta) Color(0xFF2E7D32) else Color(0xFFC62828),
-                                            modifier = Modifier.size(32.dp)
-                                        )
-                                        Column(
-                                            verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            modifier = Modifier.weight(1f)
-                                        ) {
-                                            Text(text = stringResource(R.string.OridinaPerData)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
-                                            Text(
-                                                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(partita.dataOra)),
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                overflow = TextOverflow.Ellipsis
-                                            )
-                                        }
-                                        Column(
-                                            verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            modifier = Modifier.weight(1f)
-                                        ) {
-                                            val min = partita.tempo / 60
-                                            val secs = partita.tempo % 60
-                                            Text(text = stringResource(R.string.Tempo)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
-                                            Text(
-                                                "%02d:%02d".format(min, secs),
-                                                style = MaterialTheme.typography.bodyMedium
-                                            )
-                                        }
-                                        Column(
-                                            verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            modifier = Modifier.weight(1f)
-                                        ) {
-                                            Text(text = stringResource(R.string.Difficoltà)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
-                                            Text(
-                                                partita.difficolta,
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis
-                                            )
-                                        }
-                                        Column(
-                                            verticalArrangement = Arrangement.Center,
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            modifier = Modifier.weight(1f)
-                                        ) {
-                                            Text(text = stringResource(R.string.Errori)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
-                                            Text(
-                                                "${partita.errori}",
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis
-                                            )
-                                        }
-                                    }
-                                    // Contenuto espanso
-                                    if (expanded) {
-                                        Spacer(modifier = Modifier.height(14.dp))
-                                        HorizontalDivider(
-                                            modifier = Modifier,
-                                            0.5.dp,
-                                            Color.Gray
-                                        )
-                                        partita.finalBard?.let { boardFinaleJson ->
-                                            SudokuBoardPreview(boardFinaleJson)
-                                        } ?: Text(
-                                            "Nessuna tabella finale salvata.",
-                                            Modifier.padding(12.dp),
+                                        Text(text = stringResource(R.string.OridinaPerData)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
+                                        Text(
+                                            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(partita.dataOra)),
                                             style = MaterialTheme.typography.bodyMedium,
-                                            color = Color.Gray
+                                            overflow = TextOverflow.Ellipsis
                                         )
                                     }
+                                    Column(
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        val min = partita.tempo / 60
+                                        val secs = partita.tempo % 60
+                                        Text(text = stringResource(R.string.Tempo)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
+                                        Text(
+                                            "%02d:%02d".format(min, secs),
+                                            style = MaterialTheme.typography.bodyMedium
+                                        )
+                                    }
+                                    Column(
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text(text = stringResource(R.string.Difficoltà)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
+                                        Text(
+                                            partita.difficolta,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+                                    Column(
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text(text = stringResource(R.string.Errori)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
+                                        Text(
+                                            "${partita.errori}",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+                                }
+
+                                // Contenuto espanso
+                                if (expanded) {
+                                    Spacer(modifier = Modifier.height(15.dp))
+                                    HorizontalDivider(
+                                        modifier = Modifier,
+                                        0.5.dp,
+                                        Color.Gray
+                                    )
+                                    partita.finalBard?.let { boardFinaleJson ->
+                                        SudokuBoardPreview(boardFinaleJson)
+                                    } ?: Text(
+                                        "Nessuna tabella finale salvata.",
+                                        Modifier.padding(12.dp),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = Color.Gray
+                                    )
                                 }
                             }
                         }

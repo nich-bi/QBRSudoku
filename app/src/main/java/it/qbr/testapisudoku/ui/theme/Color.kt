@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Color
 
 val quit_background = Color(0xDDFD7474)
 val gray = Color(0xFF595959)
+val gray_2 = Color(0xFF858585)
 val light_gray = Color(0xFFd7d7d7)
 
 

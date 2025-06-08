@@ -68,6 +68,7 @@ import it.qbr.testapisudoku.ui.theme.background_same_number
 import it.qbr.testapisudoku.ui.theme.blue_number
 import it.qbr.testapisudoku.ui.theme.blue_p
 import it.qbr.testapisudoku.ui.theme.gray
+import it.qbr.testapisudoku.ui.theme.gray_2
 import it.qbr.testapisudoku.ui.theme.light_gray
 import it.qbr.testapisudoku.ui.theme.quit_background
 
@@ -430,7 +431,7 @@ fun SudokuKeypad(
                     Text(
                         text = number.toString(),
                         fontSize = 25.sp,
-                        color = if (!isDisabled) blue_p else gray,
+                        color = if (!isDisabled) blue_p else gray_2,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -459,7 +460,7 @@ fun SudokuKeypad(
                     Text(
                         text = number.toString(),
                         fontSize = 25.sp,
-                        color = if (!isDisabled) blue_p else gray,
+                        color = if (!isDisabled) blue_p else gray_2,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
