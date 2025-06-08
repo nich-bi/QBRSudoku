@@ -1,8 +1,7 @@
 package it.qbr.testapisudoku
 
-import androidx.activity.ComponentActivity
 import android.os.Bundle
-
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.compose.rememberNavController
 import it.qbr.testapisudoku.ui.MainNavHost

@@ -1,19 +1,14 @@
 package it.qbr.testapisudoku.ui
 
-import android.view.MotionEvent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.animation.with
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -49,10 +44,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.changedToUpIgnoreConsumed
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -67,11 +58,9 @@ import it.qbr.testapisudoku.ui.theme.background_rows
 import it.qbr.testapisudoku.ui.theme.background_same_number
 import it.qbr.testapisudoku.ui.theme.blue_number
 import it.qbr.testapisudoku.ui.theme.blue_p
-import it.qbr.testapisudoku.ui.theme.gray
 import it.qbr.testapisudoku.ui.theme.gray_2
 import it.qbr.testapisudoku.ui.theme.light_gray
 import it.qbr.testapisudoku.ui.theme.quit_background
-
 
 
 @Composable
