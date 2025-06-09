@@ -2,23 +2,29 @@ package it.qbr.testapisudoku.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,6 +40,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.qbr.testapisudoku.R
+import it.qbr.testapisudoku.ui.theme.QBRSudokuTheme
 import it.qbr.testapisudoku.ui.theme.blue_secondary
 import kotlinx.coroutines.delay
 
@@ -44,84 +51,111 @@ fun HomeScreen(
     onStorico: () -> Unit,
     onStats: () -> Unit
 ) {
-    Scaffold(
-        topBar = {
-        },
-        bottomBar = {
+    var darkMode by remember { mutableStateOf(false) }
+    QBRSudokuTheme(darkTheme = darkMode) {
+        // Main content of the HomeScreen
+        Scaffold(
+            contentWindowInsets = WindowInsets(0),
+            topBar = {
+                IconButton(
+                    onClick = {
+                        darkMode = !darkMode
+                    },
+                    modifier = Modifier.size(50.dp).statusBarsPadding()
+
+                ) {
+                    Icon(
+                        painter = painterResource(
+                            id = if (darkMode) R.drawable.sunny else R.drawable.ic_darkmode
+                        ),
+                        contentDescription = "Cambio modalita' scura",
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
+            },
+            bottomBar = {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 40.dp)
+                ) {
+                    Button(
+                        onClick = onStartGame,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .size(150.dp, 50.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = blue_secondary),
+                        shape = RoundedCornerShape(50.dp),
+                    ) {
+                        Text(text = stringResource(id = R.string.StartGame), fontSize = 22.sp)
+                    }
+                    Spacer(modifier = Modifier.height(18.dp))
+                    Button(
+                        onClick = onStats,
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .border(
+                                width = 2.dp,
+                                color = blue_secondary,
+                                shape = RoundedCornerShape(50.dp)
+                            ),
+                    ) {
+                        Text(
+                            text = stringResource(R.string.Stat),
+                            fontSize = 15.sp,
+                            color = blue_secondary
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(18.dp))
+                    Button(
+                        onClick = onStorico,
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .border(
+                                width = 2.dp,
+                                color = blue_secondary,
+                                shape = RoundedCornerShape(50.dp)
+                            ),
+                    ) {
+                        Text(
+                            text = stringResource(R.string.History),
+                            fontSize = 15.sp,
+                            color = blue_secondary
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "by QBR",
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
+                }
+            }
+        ) { innerPadding ->
+            // Content
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 40.dp)
+                    .fillMaxSize()
+                    .padding(top = 96.dp)
+                    .padding(innerPadding)
             ) {
-                Button(
-                    onClick = onStartGame,
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .size(150.dp, 50.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = blue_secondary),
-                    shape = RoundedCornerShape(50.dp),
-                ) {
-                    Text(text = stringResource(id = R.string.StartGame), fontSize = 22.sp)
-                }
-                Spacer(modifier = Modifier.height(18.dp))
-                Button(
-                    onClick = onStats,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .border(
-                            width = 2.dp,
-                            color = blue_secondary,
-                            shape = RoundedCornerShape(50.dp)
-                        ),
-                ) {
-                    Text(text = stringResource(R.string.Stat), fontSize = 15.sp, color = blue_secondary)
-                }
-                Spacer(modifier = Modifier.height(18.dp))
-                Button(
-                    onClick = onStorico,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .border(
-                            width = 2.dp,
-                            color = blue_secondary,
-                            shape = RoundedCornerShape(50.dp)
-                        ),
-                ) {
-                    Text(text = stringResource(R.string.History), fontSize = 15.sp, color = blue_secondary)
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "by QBR",
-                    fontSize = 16.sp,
-                    modifier = Modifier.padding(top = 16.dp)
+                TypewriterText(
+                    text = "QBRSudoku",
+                )
+                Spacer(modifier = Modifier.height(64.dp))
+                Image(
+                    painter = painterResource(id = if(darkMode) R.drawable.sudokuimage_dark else R.drawable.sudokuimage),
+                    contentDescription = "Logo",
+                    modifier = Modifier.size(240.dp)
                 )
             }
         }
-    ) { innerPadding ->
-        // Content
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 96.dp)
-                .padding(innerPadding)
-        ) {
-            TypewriterText(
-                text = "QBRSudoku",
-            )
-            Spacer(modifier = Modifier.height(64.dp))
-            Image(
-                painter = painterResource(id = R.drawable.sudokuimage),
-                contentDescription = "Logo",
-                modifier = Modifier.size(240.dp)
-            )
-        }
     }
 }
-
 
 
 @Composable

@@ -1,5 +1,6 @@
 package it.qbr.testapisudoku.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
@@ -221,6 +222,7 @@ fun AnimatedDigit(digit: Char, key: String) {
 
 
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun SudokuBoard(
     grid: List<List<Int>>,
