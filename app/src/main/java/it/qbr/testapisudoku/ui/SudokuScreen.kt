@@ -154,6 +154,7 @@ fun SudokuScreen(navController: NavHostController) {
                     )
                 }
             }
+
         }
     } else {
         LaunchedEffect(Unit) {
