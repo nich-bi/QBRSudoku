@@ -39,6 +39,7 @@ import java.util.concurrent.TimeUnit
 @Composable
 fun StatsScreen(
     navController: NavHostController,
+    isDarkTheme : Boolean,
     games: List<Game>
 ) {
     val bestTime = games.filter { it.vinta }.minByOrNull { it.tempo }?.tempo
@@ -79,11 +80,12 @@ fun StatsScreen(
             // Sezione TEMPO
             StatsSection(
                 icon = R.drawable.ic_time,
-                title = stringResource(R.string.Tempo)
+                title = stringResource(R.string.Tempo),
+                isDarkTheme = isDarkTheme
             ) {
-                StatsRow(label = stringResource(R.string.stats_bt), value = bestTime?.let { formatTime(it) } ?: "--")
+                StatsRow(label = stringResource(R.string.stats_bt), value = bestTime?.let { formatTime(it) } ?: "--",isDarkTheme = isDarkTheme)
                 HorizontalDivider(Modifier.padding(vertical = 4.dp))
-                StatsRow(label = stringResource(R.string.stats_at), value = avgTime?.let { formatTime(it.toInt()) } ?: "--")
+                StatsRow(label = stringResource(R.string.stats_at), value = avgTime?.let { formatTime(it.toInt()) } ?: "--",isDarkTheme = isDarkTheme)
             }
 
             Spacer(Modifier.height(20.dp))
@@ -91,13 +93,14 @@ fun StatsScreen(
             // Sezione PARTITE
             StatsSection(
                 icon = R.drawable.ic_game,
-                title = stringResource(R.string.stats_section_games)
+                title = stringResource(R.string.stats_section_games),
+                isDarkTheme = isDarkTheme
             ) {
-                StatsRow(label = stringResource(R.string.stats_gs), value = gamesStarted.toString())
+                StatsRow(label = stringResource(R.string.stats_gs), value = gamesStarted.toString(),isDarkTheme = isDarkTheme)
                 HorizontalDivider(Modifier.padding(vertical = 4.dp))
-                StatsRow(label = stringResource(R.string.stats_gc), value = gamesCompleted.toString())
+                StatsRow(label = stringResource(R.string.stats_gc), value = gamesCompleted.toString(),isDarkTheme = isDarkTheme)
                 HorizontalDivider(Modifier.padding(vertical = 4.dp))
-                StatsRow(label = stringResource(R.string.stats_wr), value = "$winRate%")
+                StatsRow(label = stringResource(R.string.stats_wr), value = "$winRate%", isDarkTheme = isDarkTheme)
             }
 
             Spacer(Modifier.height(20.dp))
@@ -105,7 +108,8 @@ fun StatsScreen(
             // Sezione MIGLIORI PARTITE
             StatsSection(
                 icon = R.drawable.ic_star,
-                title = stringResource(R.string.stats_section_mp)
+                title = stringResource(R.string.stats_section_mp),
+                isDarkTheme = isDarkTheme
             ) {
                 if (topGames.isEmpty()) {
                     Text(
@@ -153,6 +157,7 @@ fun StatsScreen(
 fun StatsSection(
     icon: Int,
     title: String,
+    isDarkTheme: Boolean,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(
@@ -172,7 +177,7 @@ fun StatsSection(
             Text(
                 text = title,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF1E1E25),
+                color = if (isDarkTheme) Color.White else Color(0xFF363648),
                 style = MaterialTheme.typography.titleMedium
             )
         }
@@ -184,7 +189,8 @@ fun StatsSection(
 @Composable
 fun StatsRow(
     label: String,
-    value: String
+    value: String,
+    isDarkTheme: Boolean,
 ) {
     Row(
         Modifier
@@ -194,13 +200,14 @@ fun StatsRow(
     ) {
         Text(
             text = label,
-            color = Color(0xFF7C7C8A),
+            color =  if (isDarkTheme) Color.White else  Color(0xFF7C7C8A),
+            //color =  Color(0xFF7C7C8A),
             style = MaterialTheme.typography.bodyMedium
         )
         Text(
             text = value,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF363648),
+            color =  if (isDarkTheme) Color.White else Color(0xFF363648),
             style = MaterialTheme.typography.bodyMedium
         )
     }

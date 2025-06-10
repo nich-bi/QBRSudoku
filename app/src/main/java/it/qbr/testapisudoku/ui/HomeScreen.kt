@@ -2,7 +2,6 @@ package it.qbr.testapisudoku.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -24,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -49,24 +47,24 @@ import kotlinx.coroutines.delay
 fun HomeScreen(
     onStartGame: () -> Unit,
     onStorico: () -> Unit,
-    onStats: () -> Unit
+    onStats: () -> Unit,
+    isDarkTheme: Boolean,
+    onToggleDarkTheme: () -> Unit
 ) {
-    var darkMode by remember { mutableStateOf(false) }
-    QBRSudokuTheme(darkTheme = darkMode) {
+
+    QBRSudokuTheme(darkTheme = isDarkTheme) {
         // Main content of the HomeScreen
         Scaffold(
             contentWindowInsets = WindowInsets(0),
             topBar = {
                 IconButton(
-                    onClick = {
-                        darkMode = !darkMode
-                    },
+                    onClick = onToggleDarkTheme,
                     modifier = Modifier.size(50.dp).statusBarsPadding()
 
                 ) {
                     Icon(
                         painter = painterResource(
-                            id = if (darkMode) R.drawable.sunny else R.drawable.ic_darkmode
+                            id = if (isDarkTheme) R.drawable.sunny else R.drawable.ic_darkmode
                         ),
                         contentDescription = "Cambio modalita' scura",
                         modifier = Modifier.size(40.dp)
@@ -95,6 +93,7 @@ fun HomeScreen(
                         onClick = onStats,
                         colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                         modifier = Modifier
+                            .size(150.dp, 50.dp) //MODIFICATO SE SI ROMPE SUL TELEFONO TOGLIERE
                             .wrapContentWidth()
                             .border(
                                 width = 2.dp,
@@ -113,6 +112,7 @@ fun HomeScreen(
                         onClick = onStorico,
                         colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                         modifier = Modifier
+                            .size(150.dp, 50.dp)  // TODO:q SE SI ROMPE SUL TELEFONO TOGLIERE
                             .wrapContentWidth()
                             .border(
                                 width = 2.dp,
@@ -148,7 +148,7 @@ fun HomeScreen(
                 )
                 Spacer(modifier = Modifier.height(64.dp))
                 Image(
-                    painter = painterResource(id = if(darkMode) R.drawable.sudokuimage_dark else R.drawable.sudokuimage),
+                    painter = painterResource(id = if(isDarkTheme) R.drawable.sudokuimage_dark else R.drawable.sudokuimage),
                     contentDescription = "Logo",
                     modifier = Modifier.size(240.dp)
                 )

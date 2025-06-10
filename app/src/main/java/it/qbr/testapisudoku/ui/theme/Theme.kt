@@ -13,13 +13,13 @@ private val DarkColorScheme = darkColorScheme(
     primary = blue_p,         // blu chiaro
     onPrimary = Color.Black,
     secondary = blue_secondary,       // azzurro chiaro
-    onSecondary = Color.Black,
-    background = Color(0xFF121212),      // quasi nero
+    onSecondary = Color.Black,  // grigio chiaro per le icone delle statistiche
+    background = Color(34, 40, 49),      // quasi nero
     onBackground = Color(0xFFE0E0E0),    // grigio chiaro
     surface = Color(0xFF1E1E1E),         // grigio scuro
     onSurface = Color(0xFFEEEEEE),       // quasi bianco
     error = Color(0xFFCF6679),           // rosso acceso
-    onError = Color.Black
+    onError = Color.Black,
 )
 
 
@@ -29,7 +29,7 @@ private val LightColorScheme = lightColorScheme(
     secondary = blue_secondary,
     onSecondary = Color.White,
     background = Color.White,
-    onBackground = Color.Black,
+    onBackground = Color.DarkGray,
     surface = background_rows,
     onSurface = gray,
     error = quit_background,

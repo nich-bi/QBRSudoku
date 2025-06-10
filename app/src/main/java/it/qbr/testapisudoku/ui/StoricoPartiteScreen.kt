@@ -75,7 +75,7 @@ enum class Ordinamento(val label: String) { CRONO("Data"), TEMPO("Tempo di gioco
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StoricoPartiteScreen(navController: NavHostController) {
+fun StoricoPartiteScreen(navController: NavHostController, isDarkTheme: Boolean) {
     val context = LocalContext.current
     var storico by remember { mutableStateOf<List<Game>>(emptyList()) }
     val scope = rememberCoroutineScope()
@@ -144,7 +144,7 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                 Modifier
                     .fillMaxWidth()
                     .padding(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFE0F1FF)),
+                colors = CardDefaults.cardColors(containerColor = if(isDarkTheme) Color(34, 40, 49) else Color(0xFFE0F1FF)),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Column(
@@ -153,18 +153,19 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                         .padding(10.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(text = stringResource(R.string.Filtra)+":", modifier = Modifier.padding(end = 8.dp))
+                        Text(text = stringResource(R.string.Filtra)+":", modifier = Modifier.padding(end = 8.dp), color =  if (isDarkTheme) Color.White else Color.Black)
                         // Filtro vittoria
                         FiltroTab(
                             options = FiltroVittoria.entries,
                             selected = filtroVittoria,
-                            onSelect = { filtroVittoria = it }
+                            onSelect = { filtroVittoria = it },
+                            isDarkTheme = isDarkTheme
                         )
                     }
                     Spacer(Modifier.height(6.dp))
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(text = stringResource(R.string.ordina_per)+":", modifier = Modifier.padding(end = 8.dp))
+                        Text(text = stringResource(R.string.ordina_per)+":", modifier = Modifier.padding(end = 8.dp),color =  if (isDarkTheme) Color.White else Color.Black)
                         // Ordinamento
                         FiltroTab(
                             options = Ordinamento.entries,
@@ -172,7 +173,8 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                             onSelect = { ordinamento = it },
                             showArrows = true,
                             ordineDecrescente = ordineDecrescente,
-                            onInvertiOrdine = { ordineDecrescente = !ordineDecrescente }
+                            onInvertiOrdine = { ordineDecrescente = !ordineDecrescente },
+                            isDarkTheme = isDarkTheme
                         )
                     }
                 }
@@ -233,11 +235,12 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                         horizontalAlignment = Alignment.CenterHorizontally,
                                         modifier = Modifier.weight(1f)
                                     ) {
-                                        Text(text = stringResource(R.string.OridinaPerData)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
+                                        Text(text = stringResource(R.string.OridinaPerData)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium,color =   Color.Black)
                                         Text(
                                             SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(partita.dataOra)),
                                             style = MaterialTheme.typography.bodyMedium,
-                                            overflow = TextOverflow.Ellipsis
+                                            overflow = TextOverflow.Ellipsis,
+                                            color =  Color.Black
                                         )
                                     }
                                     Column(
@@ -247,10 +250,11 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                     ) {
                                         val min = partita.tempo / 60
                                         val secs = partita.tempo % 60
-                                        Text(text = stringResource(R.string.Tempo)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
+                                        Text(text = stringResource(R.string.Tempo)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium,color =  Color.Black)
                                         Text(
                                             "%02d:%02d".format(min, secs),
-                                            style = MaterialTheme.typography.bodyMedium
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color =   Color.Black
                                         )
                                     }
                                     Column(
@@ -258,12 +262,13 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                         horizontalAlignment = Alignment.CenterHorizontally,
                                         modifier = Modifier.weight(1f)
                                     ) {
-                                        Text(text = stringResource(R.string.Difficoltà)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
+                                        Text(text = stringResource(R.string.Difficoltà)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium,color =  Color.Black)
                                         Text(
                                             partita.difficolta,
                                             style = MaterialTheme.typography.bodyMedium,
                                             maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis
+                                            overflow = TextOverflow.Ellipsis,
+                                            color =   Color.Black
                                         )
                                     }
                                     Column(
@@ -271,12 +276,13 @@ fun StoricoPartiteScreen(navController: NavHostController) {
                                         horizontalAlignment = Alignment.CenterHorizontally,
                                         modifier = Modifier.weight(1f)
                                     ) {
-                                        Text(text = stringResource(R.string.Errori)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
+                                        Text(text = stringResource(R.string.Errori)+":", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium,color = Color.Black)
                                         Text(
                                             "${partita.errori}",
                                             style = MaterialTheme.typography.bodyMedium,
                                             maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis
+                                            overflow = TextOverflow.Ellipsis,
+                                            color = Color.Black
                                         )
                                     }
                                 }
@@ -317,7 +323,8 @@ fun <T> FiltroTab(
     showArrows: Boolean = false,
     ordineDecrescente: Boolean = true,
     onInvertiOrdine: (() -> Unit)? = null,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
+    isDarkTheme: Boolean
 ) where T : Enum<T> {
     val tabHeight = 36.dp
     val arrowWidth = if (showArrows) tabHeight else 0.dp
@@ -342,7 +349,7 @@ fun <T> FiltroTab(
                     .width(tabWidth)
                     .height(tabHeight)
                     .clip(RoundedCornerShape(50))
-                    .background(Color(0xFFCCE6FF))
+                    .background(if (isDarkTheme) Color(34, 40, 49) else Color(0xFFCCE6FF))
                     .border(
                         width = 2.dp,
                         color = blue_secondary,
@@ -381,7 +388,7 @@ fun <T> FiltroTab(
                             else opzione.name.replaceFirstChar { it.uppercase() },
                             fontSize = MaterialTheme.typography.bodySmall.fontSize,
                             fontWeight = if (selected == opzione) FontWeight.Bold else FontWeight.Normal,
-                            color = if (selected == opzione) blue_secondary else MaterialTheme.colorScheme.onSurface,
+                            color = if (selected == opzione) blue_secondary else  Color.Black,
                             modifier = Modifier.padding(horizontal = 6.dp)
                         )
                     }
@@ -422,7 +429,7 @@ fun SudokuBoardPreview(boardJson: String) {
         }
     }
     Column(Modifier.padding(12.dp)) {
-        Text(text = stringResource(R.string.tabella_finale), fontWeight = FontWeight.SemiBold)
+        Text(text = stringResource(R.string.tabella_finale), fontWeight = FontWeight.SemiBold, color = Color.Black)
         Spacer(Modifier.height(8.dp))
         // Box per centrare la griglia
         Box(
@@ -482,7 +489,8 @@ fun SudokuBoardPreview(boardJson: String) {
                                     Text(
                                         text = if (cell == 0) "" else cell.toString(),
                                         fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                        fontWeight = if (cell == 0) FontWeight.Normal else FontWeight.Bold
+                                        fontWeight = if (cell == 0) FontWeight.Normal else FontWeight.Bold,
+                                        color = Color.Black
                                     )
                                 }
                             }

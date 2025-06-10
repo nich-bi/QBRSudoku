@@ -16,20 +16,27 @@ import it.qbr.testapisudoku.db.Game
 import kotlinx.coroutines.launch
 
 @Composable
-fun MainNavHost(navController: NavHostController) {
+fun MainNavHost(
+    navController: NavHostController,
+    isDarkTheme: Boolean,
+    onToggleDarkTheme: () -> Unit
+) {
+
     NavHost(navController, startDestination = "home") {
         composable("home") {
             HomeScreen(
                 onStartGame = { navController.navigate("sudoku") },
                 onStorico = { navController.navigate("storico") },
-                onStats = { navController.navigate("stats") }
+                onStats = { navController.navigate("stats") } ,
+                isDarkTheme = isDarkTheme,
+                onToggleDarkTheme = onToggleDarkTheme
             )
         }
         composable("sudoku") {
-            SudokuScreen(navController)
+            SudokuScreen(navController , isDarkTheme = isDarkTheme)
         }
         composable("storico") {
-            StoricoPartiteScreen(navController)
+            StoricoPartiteScreen(navController,isDarkTheme = isDarkTheme)
         }
         composable("stats") {
             val context = LocalContext.current
@@ -44,6 +51,7 @@ fun MainNavHost(navController: NavHostController) {
 
             StatsScreen(
                 navController,
+                isDarkTheme = isDarkTheme,
                 games = games
             )
         }

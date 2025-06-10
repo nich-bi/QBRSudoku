@@ -61,9 +61,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-@SuppressLint("MutableCollectionMutableState", "UnusedBoxWithConstraintsScope", "ConfigurationScreenWidthHeight")
+@SuppressLint("MutableCollectionMutableState", "UnusedBoxWithConstraintsScope", "ConfigurationScreenWidthHeight",
+    "UnusedMaterial3ScaffoldPaddingParameter"
+)
 @Composable
-fun SudokuScreen(navController: NavHostController) {
+fun SudokuScreen(navController: NavHostController, isDarkTheme: Boolean) {
     val context = LocalContext.current
     var step by remember { mutableIntStateOf(0) }
     var selectedDifficulty by remember { mutableStateOf<Difficulty?>(null) }
@@ -115,16 +117,19 @@ fun SudokuScreen(navController: NavHostController) {
     }
 
     if (step == 0) {
+        Scaffold (containerColor = if (isDarkTheme) Color(34, 40, 49) else Color(0xFFE7EBF0)){
         Column(
             Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
+
         ) {
             IconButton(
                 onClick = { navController.popBackStack() }
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.back_svgrepo_com),
+                    tint = if (isDarkTheme) Color.White else Color.Black,
                     contentDescription = "Torna alla Home",
                     modifier = Modifier.size(30.dp)
                 )
@@ -143,19 +148,22 @@ fun SudokuScreen(navController: NavHostController) {
                     colors = ButtonDefaults.buttonColors(containerColor = blue_secondary),
                     shape = RoundedCornerShape(50.dp),
                 ) {
-                    Text( text =
-                        when(Difficulty.entries.indexOf(diff)) {
+                    Text(
+                        text =
+                            when (Difficulty.entries.indexOf(diff)) {
                                 0 -> stringResource(R.string.diff_facile)
                                 1 -> stringResource(R.string.diff_media)
                                 2 -> stringResource(R.string.diff_difficile)
                                 3 -> stringResource(R.string.diff_impossibile)
                                 else -> "Unknown"
-                        }
+                            },
+                        color = if (isDarkTheme) Color.White else Color.Black
                     )
                 }
             }
 
         }
+    }
     } else {
         LaunchedEffect(Unit) {
             val (initialBoard, solutionBoard) = withContext(Dispatchers.IO) {
