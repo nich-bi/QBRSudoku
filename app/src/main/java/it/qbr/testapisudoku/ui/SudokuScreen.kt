@@ -3,6 +3,7 @@ package it.qbr.testapisudoku.ui
 import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -129,7 +130,7 @@ fun SudokuScreen(navController: NavHostController, isDarkTheme: Boolean) {
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.back_svgrepo_com),
-                    tint = if (isDarkTheme) Color.White else Color.Black,
+                    tint = if (isDarkTheme) Color.White else Color.Black ,
                     contentDescription = "Torna alla Home",
                     modifier = Modifier.size(30.dp)
                 )
@@ -157,7 +158,7 @@ fun SudokuScreen(navController: NavHostController, isDarkTheme: Boolean) {
                                 3 -> stringResource(R.string.diff_impossibile)
                                 else -> "Unknown"
                             },
-                        color = if (isDarkTheme) Color.White else Color.Black
+                        color = Color.White
                     )
                 }
             }
@@ -222,8 +223,8 @@ fun SudokuScreen(navController: NavHostController, isDarkTheme: Boolean) {
         }
 
         if (loading) {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = Color.Blue)
+            Box(Modifier.fillMaxSize().background(if (isDarkTheme)  Color(34, 40, 49) else Color(0xFFE7EBF0)), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = blue_p)
             }
         } else {
             Scaffold(
@@ -240,11 +241,14 @@ fun SudokuScreen(navController: NavHostController, isDarkTheme: Boolean) {
                                 if (isPaused) {
                                     selectedCell = null // Deseleziona la cella se in pausa
                                 }
-                            }
+                            } ,
+                            isDarkTheme = isDarkTheme,
+
                         )
                     }
+
                 },
-                containerColor = Color(0xFFE7EBF0)
+                containerColor = if (isDarkTheme) Color(34, 40, 49)  else Color(0xFFE7EBF0)
             ) { innerPadding ->
                 Column(
                     modifier = Modifier
@@ -283,7 +287,8 @@ fun SudokuScreen(navController: NavHostController, isDarkTheme: Boolean) {
                             },
                             onSuggestMove = { },
                             modifier = Modifier.fillMaxSize(),
-                            enabled = !isPaused
+                            enabled = !isPaused,
+                            isDarkTheme = isDarkTheme
                         )
 
 
@@ -313,7 +318,8 @@ fun SudokuScreen(navController: NavHostController, isDarkTheme: Boolean) {
                             context.startActivity(intent)
                         },
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
+                        isDarkTheme = isDarkTheme,
                     )
                     // KEYPAD
                     SudokuKeypad(
@@ -479,7 +485,8 @@ fun SudokuScreen(navController: NavHostController, isDarkTheme: Boolean) {
                 onHomeClick = {
                     showResultScreen = false
                     navController.popBackStack()
-                }
+                },
+                isDarkTheme = isDarkTheme,
             )
         }
 

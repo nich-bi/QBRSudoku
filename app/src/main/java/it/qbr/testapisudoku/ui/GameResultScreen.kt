@@ -48,7 +48,8 @@ fun GameResultScreen(
     errorCount: Int,
     seconds: Int,
     onHomeClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isDarkTheme: Boolean
 ) {
     var showSolution by remember { mutableStateOf(false) }
     val timeText = String.format("%02d:%02d", seconds / 60, seconds % 60)
@@ -102,7 +103,8 @@ fun GameResultScreen(
                 selectedNumber = null,
                 onSuggestMove = {},
                 onCellSelected = { _, _ -> },
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                isDarkTheme = isDarkTheme 
             )
         }
         Spacer(Modifier.height(24.dp))

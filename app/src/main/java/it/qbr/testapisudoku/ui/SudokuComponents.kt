@@ -59,6 +59,7 @@ import it.qbr.testapisudoku.ui.theme.background_rows
 import it.qbr.testapisudoku.ui.theme.background_same_number
 import it.qbr.testapisudoku.ui.theme.blue_number
 import it.qbr.testapisudoku.ui.theme.blue_p
+import it.qbr.testapisudoku.ui.theme.gray
 import it.qbr.testapisudoku.ui.theme.gray_2
 import it.qbr.testapisudoku.ui.theme.light_gray
 import it.qbr.testapisudoku.ui.theme.quit_background
@@ -71,7 +72,8 @@ fun SudokuTopBar(
     errorCount: Int,
     isPaused: Boolean,
     onHomeClick: () -> Unit,
-    onPauseClick: () -> Unit
+    onPauseClick: () -> Unit,
+    isDarkTheme: Boolean
 ) {
     val minutes = seconds / 60
     val secs = seconds % 60
@@ -109,7 +111,8 @@ fun SudokuTopBar(
                     for (i in errorCountString.indices) {
                         AnimatedDigit(
                             digit = errorCountString[i],
-                            key = "err$i"
+                            key = "err$i",
+                            isDarkTheme = isDarkTheme
                         )
                     }
                     Text(
@@ -117,12 +120,13 @@ fun SudokuTopBar(
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Black,
                         fontFamily = FontFamily(Font(R.font.poppins_regular)),
-                        color = Color.Black,
+                        color = if (isDarkTheme) Color.White else Color.Black,
                     )
                     for (i in maxErrString.indices) {
                         AnimatedDigit(
                             digit = maxErrString[i],
-                            key = "maxerr$i"
+                            key = "maxerr$i",
+                            isDarkTheme = isDarkTheme,
                         )
                     }
                 }
@@ -131,7 +135,7 @@ fun SudokuTopBar(
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Black,
                     fontFamily = FontFamily(Font(R.font.poppins_regular)),
-                    color = Color.Black,
+                    color = if (isDarkTheme) Color.White else Color.Black,
                 )
             }
         }
@@ -146,7 +150,8 @@ fun SudokuTopBar(
                     for (i in 0..3) {
                         AnimatedDigit(
                             digit = timeString[i],
-                            key = "timer$i"
+                            key = "timer$i",
+                            isDarkTheme = isDarkTheme
                         )
                         if (i == 1) {
                             Text(
@@ -154,7 +159,7 @@ fun SudokuTopBar(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
                                 fontFamily = FontFamily(Font(R.font.poppins_bold)),
-                                color = Color.Black
+                                color = if (isDarkTheme) Color.White else Color.Black
                             )
                         }
                     }
@@ -164,7 +169,7 @@ fun SudokuTopBar(
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily(Font(R.font.poppins_regular)),
-                    color = Color.Black
+                    color = if (isDarkTheme) Color.White else Color.Black
                 )
             }
         }
@@ -190,7 +195,7 @@ fun SudokuTopBar(
                             imageVector = if (isPaused) Icons.Filled.PlayArrow else Icons.Filled.Pause,
                             contentDescription = if (isPaused) "Riprendi" else "Pausa",
                             modifier = Modifier.size(20.dp),
-                            tint = Color.Black
+                            tint = Color.Black // colore dell'icona
                         )
                     }
                 }
@@ -202,7 +207,7 @@ fun SudokuTopBar(
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun AnimatedDigit(digit: Char, key: String) {
+fun AnimatedDigit(digit: Char, key: String, isDarkTheme: Boolean) {
     AnimatedContent(
         targetState = digit,
         transitionSpec = {
@@ -215,7 +220,7 @@ fun AnimatedDigit(digit: Char, key: String) {
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = FontFamily(Font(R.font.poppins_bold)),
-            color = Color.Black,
+            color = if (isDarkTheme) Color.White else Color.Black,
         )
     }
 }
@@ -233,7 +238,8 @@ fun SudokuBoard(
     onSuggestMove: () -> Unit,
     onCellSelected: (Int, Int) -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    isDarkTheme: Boolean
 ) {
     BoxWithConstraints(modifier = modifier) {
         // Calcola la dimensione massima per la cella in base allo spazio disponibile
@@ -275,8 +281,9 @@ fun SudokuBoard(
                             borderLeft = thickLeft,
                             borderRight = thickRight,
                             borderBottom = thickBottom,
-                            borderColor = Color.Black,
-                            cellSize = cellSize
+                            borderColor = if (isDarkTheme) Color.White else Color.Black,
+                            cellSize = cellSize,
+                            isDarkTheme = isDarkTheme
                         )
                     }
                 }
@@ -302,18 +309,19 @@ fun SudokuCell(
     isSameNumber: Boolean,
     borderColor: Color,
     notes: Set<Int> = emptySet(),
-    cellSize: Dp
+    cellSize: Dp,
+    isDarkTheme: Boolean
 ) {
     val backgroundColor = when {
-        isHighlighted -> background_rows
-        isSelected -> background_cell
-        isSameNumber -> background_same_number
-        else -> Color.White
+        isHighlighted -> if(isDarkTheme) gray_2 else background_rows
+        isSelected -> if(isDarkTheme) Color.DarkGray else background_cell
+        isSameNumber -> if (isDarkTheme) Color.DarkGray else background_same_number
+        else -> if (isDarkTheme) Color.Black else Color.White
     }
 
     val numberColor = when {
         isError -> Color.Red
-        isFixed -> Color.Black
+        isFixed -> if (isDarkTheme) Color.White else Color.Black
         else -> blue_number
     }
 
@@ -493,7 +501,8 @@ fun SudokuIconBar(
     showNoHintsDialog: () -> Unit,
     blue_p: Color,
     onHelp: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isDarkTheme: Boolean
 ) {
     val context = LocalContext.current
 
@@ -524,7 +533,7 @@ fun SudokuIconBar(
                 Text(
                     text = "Selez.",
                     fontSize = 12.sp,
-                    color = Color.Black,
+                    color = if (isDarkTheme) Color.White else Color.Black,
                     modifier = Modifier.padding(top = 55.dp),
                     fontWeight = FontWeight.SemiBold
                 )
@@ -558,7 +567,7 @@ fun SudokuIconBar(
                 Text(
                     text = "Canc.",
                     fontSize = 12.sp,
-                    color = Color.Black,
+                    color = if (isDarkTheme) Color.White else Color.Black,
                     modifier = Modifier.padding(top = 55.dp),
                     fontWeight = FontWeight.SemiBold
                 )
@@ -589,9 +598,9 @@ fun SudokuIconBar(
                 val (iconRes, iconTint) = if (hintsLeft >= maxHints) {
                     R.drawable.ic_no_hints_left to Color.Gray
                 } else if (hintPressed) {
-                    R.drawable.ic_hints_fill to Color.Black
+                    R.drawable.ic_hints_fill to if (isDarkTheme) Color.White else Color.Black
                 } else {
-                    R.drawable.ic_hints_nofill to Color.Black
+                    R.drawable.ic_hints_nofill to if (isDarkTheme) Color.White else Color.Black
                 }
                 Icon(
                     painter = painterResource(id = iconRes),
@@ -602,7 +611,7 @@ fun SudokuIconBar(
                 Text(
                     text = "Sugg.",
                     fontSize = 12.sp,
-                    color = Color.Black,
+                    color = if (isDarkTheme) Color.White else Color.Black,
                     modifier = Modifier.padding(top = 55.dp),
                     fontWeight = FontWeight.SemiBold
                 )
@@ -616,7 +625,7 @@ fun SudokuIconBar(
                     ) {
                         Text(
                             text = (maxHints - hintsLeft).toString(),
-                            color = Color.White,
+                            color =  if (isDarkTheme) Color.White else Color.Black,
                             fontSize = 12.sp
                         )
                     }
@@ -637,7 +646,7 @@ fun SudokuIconBar(
                 Text(
                     text = "Aiuto",
                     fontSize = 12.sp,
-                    color = Color.Black,
+                    color =  if (isDarkTheme) Color.White else Color.Black,
                     modifier = Modifier.padding(top = 55.dp),
                     fontWeight = FontWeight.SemiBold
                 )

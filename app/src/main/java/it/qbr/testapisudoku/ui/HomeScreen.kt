@@ -86,7 +86,7 @@ fun HomeScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = blue_secondary),
                         shape = RoundedCornerShape(50.dp),
                     ) {
-                        Text(text = stringResource(id = R.string.StartGame), fontSize = 22.sp)
+                        Text(text = stringResource(id = R.string.StartGame), fontSize = 22.sp, color = Color.White)
                     }
                     Spacer(modifier = Modifier.height(18.dp))
                     Button(
