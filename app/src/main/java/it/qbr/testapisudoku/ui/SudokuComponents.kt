@@ -239,14 +239,18 @@ fun SudokuBoard(
     onCellSelected: (Int, Int) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    isDarkTheme: Boolean
+    isDarkTheme: Boolean,
+    maxBoardHeight: Dp? = null
 ) {
     BoxWithConstraints(modifier = modifier) {
         // Calcola la dimensione massima per la cella in base allo spazio disponibile
+        val usableHeight = if (maxBoardHeight != null) maxBoardHeight.coerceAtMost(maxHeight) else maxHeight
         val cellSize = (maxWidth / 9).coerceAtMost(maxHeight / 9)
 
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .width(cellSize * 9)
+                .height(cellSize * 9),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

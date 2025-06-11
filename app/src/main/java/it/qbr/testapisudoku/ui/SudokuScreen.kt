@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -257,11 +258,23 @@ fun SudokuScreen(navController: NavHostController, isDarkTheme: Boolean) {
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+
+                    val iconBarHeight = 64.dp
+                    val keypadHeight = 110.dp
+                    val verticalPadding = 32.dp // somma di eventuali padding verticali extra
+
+                    val configuration = LocalConfiguration.current
+                    val screenHeight = configuration.screenHeightDp.dp
+
+                    val maxBoardHeight = screenHeight - iconBarHeight - keypadHeight - verticalPadding
+
+
                     // BOARD
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(1f)
+                            .weight(1f)
                             .blur(blurDp)
                             .pointerInput(isPaused) {
                                 if (isPaused) {
@@ -288,7 +301,8 @@ fun SudokuScreen(navController: NavHostController, isDarkTheme: Boolean) {
                             onSuggestMove = { },
                             modifier = Modifier.fillMaxSize(),
                             enabled = !isPaused,
-                            isDarkTheme = isDarkTheme
+                            isDarkTheme = isDarkTheme,
+                            maxBoardHeight = maxBoardHeight
                         )
 
 

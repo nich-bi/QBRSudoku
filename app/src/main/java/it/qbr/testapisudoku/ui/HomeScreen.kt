@@ -67,7 +67,7 @@ fun HomeScreen(
                             id = if (isDarkTheme) R.drawable.sunny else R.drawable.ic_darkmode
                         ),
                         contentDescription = "Cambio modalita' scura",
-                        modifier = Modifier.size(40.dp)
+                        //modifier = Modifier.size(40.dp)
                     )
                 }
             },
