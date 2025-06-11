@@ -51,13 +51,14 @@ fun GameResultScreen(
     modifier: Modifier = Modifier,
     isDarkTheme: Boolean
 ) {
+
     var showSolution by remember { mutableStateOf(false) }
     val timeText = String.format("%02d:%02d", seconds / 60, seconds % 60)
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFE7EBF0))
+            .background(if (isDarkTheme)  Color(34, 40, 49) else Color(0xFFE7EBF0))
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -77,12 +78,12 @@ fun GameResultScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(stringResource(R.string.Tempo), style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.Tempo), style = MaterialTheme.typography.bodyMedium, color = if ( isDarkTheme) Color.White else Color.Black)
                 Text(timeText, style = MaterialTheme.typography.bodyLarge)
             }
             Spacer(Modifier.height(12.dp))
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(stringResource(R.string.Errori), style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.Errori), style = MaterialTheme.typography.bodyMedium, color = if ( isDarkTheme) Color.White else Color.Black)
                 Text("$errorCount", style = MaterialTheme.typography.bodyLarge)
             }
         }
@@ -121,7 +122,8 @@ fun GameResultScreen(
                         width = 2.dp,
                         color = blue_secondary,
                         shape = RoundedCornerShape(50.dp)
-                    ),
+                    )
+                    .size( 160.dp, 50.dp),
             ) {
                 Text(stringResource(R.string.mostra_sol), fontSize = 15.sp, color = blue_secondary)
             }
