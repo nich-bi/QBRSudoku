@@ -47,7 +47,11 @@ QBRSudoku è un'applicazione Android per giocare a Sudoku, sviluppata in Kotlin 
 
 ## Crediti
 
-Sviluppato da [nich-bi](https://github.com/nich-bi).
+Sviluppato da:
+[Nicolò Bianchi](https://github.com/nich-bi)
+[David Belfiori](https://github.com/davidbelfiori)
+[Matteo Volpe](https://github.com/Fox070204)
+
 
 ---
 
