@@ -27,7 +27,7 @@ fun MainNavHost(
             HomeScreen(
                 onStartGame = { navController.navigate("sudoku") },
                 onStorico = { navController.navigate("storico") },
-                onStats = { navController.navigate("stats") } ,
+                onStats = { navController.navigate("stats") },
                 isDarkTheme = isDarkTheme,
                 onToggleDarkTheme = onToggleDarkTheme
             )
