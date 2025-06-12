@@ -61,6 +61,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.times
 
 
 @SuppressLint("MutableCollectionMutableState", "UnusedBoxWithConstraintsScope", "ConfigurationScreenWidthHeight",
@@ -263,18 +264,26 @@ fun SudokuScreen(navController: NavHostController, isDarkTheme: Boolean) {
                     val keypadHeight = 110.dp
                     val verticalPadding = 32.dp // somma di eventuali padding verticali extra
 
+                    // All'interno di SudokuScreen, nella parte dove c'è la Board:
                     val configuration = LocalConfiguration.current
+                    val screenWidth = configuration.screenWidthDp.dp
                     val screenHeight = configuration.screenHeightDp.dp
 
-                    val maxBoardHeight = screenHeight - iconBarHeight - keypadHeight - verticalPadding
-
-
+// Imposta una dimensione massima ragionevole (es: 400.dp) e margini
+                    val maxBoardSize = 400.dp
+                    val boardSize = remember(screenWidth, screenHeight) {
+                        // Usa il minore tra 90% della larghezza, 60% dell'altezza e maxBoardSize
+                        listOf(
+                            screenWidth * 0.9f,
+                            screenHeight * 0.6f,
+                            maxBoardSize
+                        ).minBy { it.value }
+                    }
                     // BOARD
-                    Box(
+                     Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1f)
-                            .weight(1f)
+                            .size(boardSize)
+                            .align(Alignment.CenterHorizontally)
                             .blur(blurDp)
                             .pointerInput(isPaused) {
                                 if (isPaused) {
@@ -296,16 +305,13 @@ fun SudokuScreen(navController: NavHostController, isDarkTheme: Boolean) {
                             onCellSelected = { row, col ->
                                 selectedCell = row to col
                                 selectedNumber = if (cells.getOrNull(row)?.getOrNull(col) != 0) cells[row][col] else null
-
                             },
                             onSuggestMove = { },
                             modifier = Modifier.fillMaxSize(),
                             enabled = !isPaused,
                             isDarkTheme = isDarkTheme,
-                            maxBoardHeight = maxBoardHeight
+                            maxBoardHeight = boardSize
                         )
-
-
                     }
                     // ICON BAR
                     SudokuIconBar(

@@ -63,6 +63,8 @@ import it.qbr.testapisudoku.ui.theme.gray
 import it.qbr.testapisudoku.ui.theme.gray_2
 import it.qbr.testapisudoku.ui.theme.light_gray
 import it.qbr.testapisudoku.ui.theme.quit_background
+import kotlin.div
+import kotlin.times
 
 
 @Composable
@@ -244,8 +246,8 @@ fun SudokuBoard(
 ) {
     BoxWithConstraints(modifier = modifier) {
         // Calcola la dimensione massima per la cella in base allo spazio disponibile
-        val usableHeight = if (maxBoardHeight != null) maxBoardHeight.coerceAtMost(maxHeight) else maxHeight
-        val cellSize = (maxWidth / 9).coerceAtMost(maxHeight / 9)
+        val usableSize = (maxBoardHeight ?: maxWidth).coerceAtMost(maxWidth).coerceAtMost(maxHeight)
+        val cellSize = usableSize / 9
 
         Column(
             modifier = Modifier
@@ -253,7 +255,7 @@ fun SudokuBoard(
                 .height(cellSize * 9),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        )  {
             for ((rowIdx, row) in grid.withIndex()) {
                 Row(
                     horizontalArrangement = Arrangement.Center,
@@ -399,99 +401,101 @@ fun SudokuCell(
 
 
 
+
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun SudokuKeypad(
     onNumberSelected: (Int) -> Unit,
     disabledNumbers: List<Int>,
     modifier: Modifier,
-    enabled: Boolean = true, // Per disattivare quando si mette pausa
+    enabled: Boolean = true,
     onAbbandona: (() -> Unit)? = null
 ) {
-    Column(
-        modifier
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Prima fila: 1-5
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            for (number in 1..5) {
-                val isDisabled = disabledNumbers.contains(number) || !enabled
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .aspectRatio(1f)
-                        .padding(4.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(if (!isDisabled) background_same_number else light_gray)
-                        .clickable(enabled = !isDisabled) { onNumberSelected(number) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = number.toString(),
-                        fontSize = 25.sp,
-                        color = if (!isDisabled) blue_p else gray_2,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-            }
+    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
+        val maxButtonSize = 64.dp
+        val buttonSize = remember(maxWidth) {
+            // 5 tasti per riga (incluso abbandona)
+            val size = maxWidth / 5
+            if (size > maxButtonSize) maxButtonSize else size
         }
-        Spacer(modifier = Modifier.height(10.dp))
-        // Seconda fila: 6-9 + "abbandona partita"
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.Center
+
+        Column(
+            Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            for (number in 6..9) {
-                val isDisabled = disabledNumbers.contains(number) || !enabled
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .aspectRatio(1f)
-                        .padding(4.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(if (!isDisabled) background_same_number else light_gray)
-                        .clickable(enabled = !isDisabled) { onNumberSelected(number) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = number.toString(),
-                        fontSize = 25.sp,
-                        color = if (!isDisabled) blue_p else gray_2,
-                        fontWeight = FontWeight.SemiBold
-                    )
+            // Prima fila: 1-5
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                for (number in 1..5) {
+                    val isDisabled = disabledNumbers.contains(number) || !enabled
+                    Box(
+                        modifier = Modifier
+                            .size(buttonSize)
+                            .padding(4.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(if (!isDisabled) background_same_number else light_gray)
+                            .clickable(enabled = !isDisabled) { onNumberSelected(number) },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = number.toString(),
+                            fontSize = (buttonSize.value * 0.4).sp,
+                            color = if (!isDisabled) blue_p else gray_2,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
                 }
             }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .aspectRatio(1f)
-                    .padding(4.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(quit_background)
-                    .clickable(enabled = enabled)  {
-                        if (enabled) onAbbandona?.invoke()
-                    },
-                contentAlignment = Alignment.Center
+            Spacer(modifier = Modifier.height(10.dp))
+            // Seconda fila: 6-9 + "abbandona partita"
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = "Abbandona",
-                    tint = Color(0xFFB71C1C),
-                    modifier = Modifier.size(32.dp)
-                )
+                for (number in 6..9) {
+                    val isDisabled = disabledNumbers.contains(number) || !enabled
+                    Box(
+                        modifier = Modifier
+                            .size(buttonSize)
+                            .padding(4.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(if (!isDisabled) background_same_number else light_gray)
+                            .clickable(enabled = !isDisabled) { onNumberSelected(number) },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = number.toString(),
+                            fontSize = (buttonSize.value * 0.4).sp,
+                            color = if (!isDisabled) blue_p else gray_2,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .size(buttonSize)
+                        .padding(4.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(quit_background)
+                        .clickable(enabled = enabled)  {
+                            if (enabled) onAbbandona?.invoke()
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Abbandona",
+                        tint = Color(0xFFB71C1C),
+                        modifier = Modifier.size(buttonSize * 0.5f)
+                    )
+                }
             }
         }
     }
 }
-
 
 @Composable
 fun SudokuIconBar(
@@ -629,7 +633,7 @@ fun SudokuIconBar(
                     ) {
                         Text(
                             text = (maxHints - hintsLeft).toString(),
-                            color =  if (isDarkTheme) Color.White else Color.Black,
+                            color =   Color.White ,
                             fontSize = 12.sp
                         )
                     }

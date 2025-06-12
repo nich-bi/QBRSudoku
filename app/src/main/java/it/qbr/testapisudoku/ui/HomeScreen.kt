@@ -146,11 +146,11 @@ fun HomeScreen(
                 TypewriterText(
                     text = "QBRSudoku",
                 )
-                Spacer(modifier = Modifier.height(64.dp))
+               // Spacer(modifier = Modifier.height(64.dp))
                 Image(
                     painter = painterResource(id = if(isDarkTheme) R.drawable.sudokuimage_dark else R.drawable.sudokuimage),
                     contentDescription = "Logo",
-                    modifier = Modifier.size(240.dp)
+                    modifier = Modifier.weight(1f, fill = true).padding(horizontal = 16.dp, vertical = 16.dp)
                 )
             }
         }
