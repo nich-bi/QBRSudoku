@@ -10,10 +10,18 @@ QBRSudoku è un'applicazione Android per giocare a Sudoku, sviluppata in Kotlin 
 - **Storico partite** con possibilità di filtrare e ordinare i risultati.
 - **Suggerimenti, selezione e cancellazione rapida** per aiutare il giocatore durante la partita.
 
+
 ## Screenshot
 
 | ![Menu principale](images/Screenshot_home_screen.png) | ![Schermata di gioco](images/Screenshot_game.png) | ![Statistiche](images/Screenshot_stats.png) | ![Storico partite](images/Screenshot_storico.png) | ![Risultato partita](images/Screenshot_game_result.png) |
 |:---:|:---:|:---:|:---:|:---:|
+
+
+---
+
+| ![Menu principale (dark)](images/Screenshot_home_screen_dark.png) | ![Schermata di gioco (dark)](images/Screenshot_game_dark.png) | ![Statistiche (dark)](images/Screenshot_stats_dark.png) | ![Storico partite (dark)](images/Screenshot_storico_dark.png) | ![Risultato partita (dark)](images/Screenshot_game_result_dark.png) |
+|:---:|:---:|:---:|:---:|:---:|
+
 
 ## Come funziona
 
